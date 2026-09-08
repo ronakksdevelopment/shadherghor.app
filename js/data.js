@@ -9,7 +9,7 @@ const CATEGORIES = [
   { id: "biryani", name: "Biryani", icon: "fa-solid fa-utensil-spoon", tag: "Flavorful rice dishes" },
   { id: "burgers", name: "Burgers & Sandwiches", icon: "fa-solid fa-burger", tag: "Loaded & fresh" },
   { id: "rolls", name: "Rolls & Wraps", icon: "fa-solid fa-hotdog", tag: "Street-style rolls" },
-  { id: "snacks", name: "Snacks & Sides", icon: "fa-solid fa-french-fries", tag: "Perfect bites" },
+  { id: "snacks", name: "Snacks & Sides", icon: "fa-solid fa-drumstick-bite", tag: "Perfect bites" },
   { id: "beverages", name: "Beverages", icon: "fa-solid fa-mug-saucer", tag: "Cool drinks & more" },
   { id: "combo", name: "Combo Meals", icon: "fa-solid fa-bag-shopping", tag: "Best value deals" },
 ];
@@ -50,11 +50,11 @@ const PRODUCTS = [
   { id: "r4", name: "Veg Kathi Roll", desc: "Mixed vegetable filling with cheese and herbs in a paratha wrap.", category: "rolls", rating: 4.5, icon: "fa-solid fa-hotdog", basePrice: 110, sizes: [{ label: "Regular", price: 110 }, { label: "Large", price: 160 }] },
 
   /* ===================== SNACKS & SIDES ===================== */
-  { id: "s1", name: "Chicken Fry", desc: "Crispy fried chicken pieces with a spicy coating, served with dip.", category: "snacks", rating: 4.7, badge: "Bestseller", icon: "fa-solid fa-french-fries", basePrice: 180, sizes: [{ label: "Regular", price: 180 }, { label: "Large", price: 260 }] },
-  { id: "s2", name: "French Fries", desc: "Crispy golden fries, lightly salted and served with ketchup.", category: "snacks", rating: 4.4, icon: "fa-solid fa-french-fries", basePrice: 80, sizes: [{ label: "Regular", price: 80 }, { label: "Large", price: 120 }] },
-  { id: "s3", name: "Chicken Wings", desc: "Spicy chicken wings, fried to perfection with a smoky BBQ glaze.", category: "snacks", rating: 4.6, icon: "fa-solid fa-french-fries", basePrice: 200, sizes: [{ label: "6 pcs", price: 200 }, { label: "12 pcs", price: 360 }] },
-  { id: "s4", name: "Paneer Chilly", desc: "Crispy paneer tossed in a spicy chilly sauce with bell peppers.", category: "snacks", rating: 4.5, icon: "fa-solid fa-french-fries", basePrice: 160, sizes: [{ label: "Regular", price: 160 }, { label: "Large", price: 240 }] },
-  { id: "s5", name: "Chicken Chilly", desc: "Boneless chicken pieces tossed in a spicy, tangy chilly sauce.", category: "snacks", rating: 4.6, icon: "fa-solid fa-french-fries", basePrice: 190, sizes: [{ label: "Regular", price: 190 }, { label: "Large", price: 280 }] },
+  { id: "s1", name: "Chicken Fry", desc: "Crispy fried chicken pieces with a spicy coating, served with dip.", category: "snacks", rating: 4.7, badge: "Bestseller", icon: "fa-solid fa-drumstick-bite", basePrice: 180, sizes: [{ label: "Regular", price: 180 }, { label: "Large", price: 260 }] },
+  { id: "s2", name: "French Fries", desc: "Crispy golden fries, lightly salted and served with ketchup.", category: "snacks", rating: 4.4, icon: "fa-solid fa-utensils", basePrice: 80, sizes: [{ label: "Regular", price: 80 }, { label: "Large", price: 120 }] },
+  { id: "s3", name: "Chicken Wings", desc: "Spicy chicken wings, fried to perfection with a smoky BBQ glaze.", category: "snacks", rating: 4.6, icon: "fa-solid fa-drumstick-bite", basePrice: 200, sizes: [{ label: "6 pcs", price: 200 }, { label: "12 pcs", price: 360 }] },
+  { id: "s4", name: "Paneer Chilly", desc: "Crispy paneer tossed in a spicy chilly sauce with bell peppers.", category: "snacks", rating: 4.5, icon: "fa-solid fa-utensils", basePrice: 160, sizes: [{ label: "Regular", price: 160 }, { label: "Large", price: 240 }] },
+  { id: "s5", name: "Chicken Chilly", desc: "Boneless chicken pieces tossed in a spicy, tangy chilly sauce.", category: "snacks", rating: 4.6, icon: "fa-solid fa-utensils", basePrice: 190, sizes: [{ label: "Regular", price: 190 }, { label: "Large", price: 280 }] },
 
   /* ===================== BEVERAGES ===================== */
   { id: "be1", name: "Sweet Lassi", desc: "Thick and creamy sweet lassi, a perfect complement to spicy food.", category: "beverages", rating: 4.5, icon: "fa-solid fa-mug-saucer", basePrice: 60, sizes: [{ label: "Small", price: 60 }, { label: "Large", price: 100 }] },
@@ -95,7 +95,7 @@ const FACEBOOK_LINK = "https://www.facebook.com/shadherghor";
 const HIGHLIGHTS = [
   { icon: "fa-solid fa-star", text: "Authentic recipes, fresh ingredients" },
   { icon: "fa-solid fa-truck-fast", text: "Fast & reliable delivery in Agartala" },
-  { icon: "fa-solid fa-bowl-food", text: "Generous portions, honest prices" },
+  { icon: "fa-solid fa-drumstick-bite", text: "Generous portions, honest prices" },
   { icon: "fa-solid fa-heart", text: "Made with love, served with pride" },
 ];
 
