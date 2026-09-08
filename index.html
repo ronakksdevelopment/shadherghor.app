@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Shadher Ghor - Order Food Online in Agartala</title>
+<meta name="description" content="Order delicious momo, chowmein, biryani, burgers and more online from Shadher Ghor, Agartala. Authentic street food delivered fresh.">
+<meta name="theme-color" content="#6B2020">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="assets/icons/favicon.png">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Shadher Ghor">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ===================== SPLASH ===================== -->
+<div id="splash" class="splash">
+  <div class="splash-blob blob1"></div>
+  <div class="splash-blob blob2"></div>
+  <div class="splash-logo-wrap">
+    <div class="splash-logo"><img src="assets/icons/icon-192.png" alt="Shadher Ghor logo"></div>
+    <h1 class="splash-title">Shadher<span class="amp">Ghor</span></h1>
+    <p class="splash-tag">Authentic street food, fresh & fast</p>
+  </div>
+  <div class="splash-loader"><span></span><span></span><span></span></div>
+</div>
+
+<!-- ===================== INSTALL BANNER ===================== -->
+<div id="installBanner" class="install-banner hidden">
+  <div class="install-icon"><img src="assets/icons/icon-96.png" alt=""></div>
+  <div class="install-text">
+    <strong>Install Shadher Ghor</strong>
+    <span>Add to home screen for the full app experience</span>
+  </div>
+  <button id="installBtn" class="btn-install">Install</button>
+  <button id="dismissInstall" class="install-close" aria-label="Dismiss"><i class="fa-solid fa-xmark"></i></button>
+</div>
+
+<!-- ===================== APP SHELL ===================== -->
+<div id="app" class="app">
+
+  <!-- ---------- HOME SCREEN ---------- -->
+  <main id="screen-home" class="screen active">
+
+    <header class="topbar">
+      <div class="topbar-loc" id="openLocationSheet">
+        <i class="fa-solid fa-location-dot loc-pin"></i>
+        <div class="topbar-loc-text">
+          <span class="loc-label">Deliver to</span>
+          <span class="loc-value" id="currentLocation">Agartala, Tripura <i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+      </div>
+      <button class="icon-btn" id="openContact" aria-label="Contact us">
+        <i class="fa-solid fa-phone"></i>
+      </button>
+    </header>
+
+    <section class="hero">
+      <div class="hero-decor hd1"></div>
+      <div class="hero-decor hd2"></div>
+      <div class="hero-decor hd3">✦</div>
+      <div class="hero-content">
+        <p class="hero-eyebrow">Freshly Made in Agartala. Always.</p>
+        <h1 class="hero-title">Your Cravings,<br>Freshly <span class="script">Served.</span></h1>
+        <p class="hero-sub">Authentic street food made with love, delivered across Agartala.</p>
+        <button class="hero-cta" id="heroShopBtn">
+          <i class="fa-solid fa-utensils"></i> Order Now
+        </button>
+      </div>
+      <div class="hero-food-icon"><i class="fa-solid fa-bowl-food"></i></div>
+    </section>
+
+    <div class="search-bar" id="openSearch">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>Search for momo, biryani, burgers...</span>
+    </div>
+
+    <!-- Offers / Special day strip -->
+    <section class="section offers-section">
+      <div class="section-head">
+        <h2>Special Offers</h2>
+      </div>
+      <div class="offers-scroll" id="offersScroll"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>What are you craving?</h2>
+      </div>
+      <div class="cat-scroll" id="categoryScroll"></div>
+    </section>
+
+    <section class="section promo-strip">
+      <div class="promo-card promo-a">
+        <i class="fa-solid fa-truck-fast"></i>
+        <div><strong>Free Delivery</strong><span>On orders above ₹499</span></div>
+      </div>
+      <div class="promo-card promo-b">
+        <i class="fa-solid fa-heart"></i>
+        <div><strong>Made Fresh</strong><span>Cooked on order day</span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2 id="menuHeading">Bestsellers</h2>
+        <span class="section-sub" id="menuCount"></span>
+      </div>
+      <div class="product-grid" id="productGrid"></div>
+    </section>
+
+    <!-- Reviews / trust strip -->
+    <section class="section reviews-section">
+      <div class="review-banner">
+        <div class="review-banner-top">
+          <div class="review-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+          </div>
+          <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="review-cta" id="rateUsBtn">Rate us on Google <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        </div>
+        <div class="review-highlights" id="reviewHighlights"></div>
+      </div>
+    </section>
+
+    <section class="section about-strip">
+      <div class="about-card">
+        <h3>Authentic Street Food, Fresh & Fast</h3>
+        <p>From sizzling momos to flavorful biryani, every dish at Shadher Ghor is made with authentic recipes and the freshest ingredients.</p>
+        <div class="about-partners">
+          <span class="partner-chip"><i class="fa-solid fa-utensils"></i> On Zomato</span>
+          <span class="partner-chip"><i class="fa-solid fa-utensils"></i> On Swiggy</span>
+        </div>
+        <div class="about-socials">
+          <a href="https://www.instagram.com/shadherghor" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://www.facebook.com/shadherghor" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+          <a href="https://wa.me/918794398516" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </section>
+
+    <div class="bottom-spacer"></div>
+  </main>
+
+  <!-- ---------- CATEGORY / MENU SCREEN ---------- -->
+  <main id="screen-menu" class="screen">
+    <header class="subbar">
+      <button class="icon-btn back-btn" data-back="screen-home"><i class="fa-solid fa-arrow-left"></i></button>
+      <h2 id="menuScreenTitle">All Items</h2>
+      <button class="icon-btn" id="openSearch2"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </header>
+    <div class="cat-chip-row" id="chipRow"></div>
+    <div class="product-list" id="productList"></div>
+    <div class="bottom-spacer"></div>
+  </main>
+
+  <!-- ---------- SEARCH SCREEN ---------- -->
+  <main id="screen-search" class="screen">
+    <header class="subbar search-header">
+      <button class="icon-btn back-btn" data-back="screen-home"><i class="fa-solid fa-arrow-left"></i></button>
+      <div class="search-input-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Search for momo, biryani, burgers..." autocomplete="off">
+        <i class="fa-solid fa-xmark search-clear" id="clearSearch"></i>
+      </div>
+    </header>
+    <div class="product-list" id="searchResults"></div>
+    <div class="search-empty hidden" id="searchEmpty">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <p>No items found. Try a different search.</p>
+    </div>
+    <div class="bottom-spacer"></div>
+  </main>
+
+  <!-- ---------- CART / CHECKOUT SCREEN ---------- -->
+  <main id="screen-cart" class="screen">
+    <header class="subbar">
+      <button class="icon-btn back-btn" data-back="screen-home"><i class="fa-solid fa-arrow-left"></i></button>
+      <h2>Your Cart</h2>
+      <button class="icon-btn danger" id="clearCartBtn" aria-label="Clear cart"><i class="fa-solid fa-trash"></i></button>
+    </header>
+
+    <div id="cartEmptyState" class="cart-empty hidden">
+      <i class="fa-solid fa-bowl-food"></i>
+      <h3>Your cart feels light</h3>
+      <p>Add some delicious food items to get started</p>
+      <button class="btn-primary" data-back="screen-home">Browse Menu</button>
+    </div>
+
+    <div id="cartContent" class="cart-content hidden">
+      <div class="cart-items" id="cartItems"></div>
+
+      <div class="cart-block">
+        <h3><i class="fa-solid fa-note-sticky"></i> Add a note for the chef</h3>
+        <textarea id="orderNote" placeholder="E.g. Extra spicy, no onions, make it mild..." rows="3"></textarea>
+      </div>
+
+      <div class="cart-block">
+        <h3><i class="fa-solid fa-mug-hot"></i> Add a tip for our chefs</h3>
+        <p class="tip-sub">100% of your tip goes directly to the kitchen team</p>
+        <div class="tip-row" id="tipRow">
+          <button class="tip-chip active" data-tip="0">No tip</button>
+          <button class="tip-chip" data-tip="20">₹20</button>
+          <button class="tip-chip" data-tip="50">₹50</button>
+          <button class="tip-chip" data-tip="100">₹100</button>
+          <div class="tip-custom-wrap">
+            <span>₹</span>
+            <input type="number" id="tipCustom" placeholder="Other" min="0">
+          </div>
+        </div>
+      </div>
+
+      <div class="cart-block bill-block">
+        <h3><i class="fa-solid fa-receipt"></i> Bill Details</h3>
+        <div class="bill-row"><span>Item Total</span><span id="billItemTotal">₹0</span></div>
+        <div class="bill-row"><span>Delivery Fee</span><span id="billDelivery">₹0</span></div>
+        <div class="bill-row" id="billTipRow" style="display:none;"><span>Tip for Chefs</span><span id="billTip">₹0</span></div>
+        <div class="bill-row discount-row" id="billDiscountRow" style="display:none;"><span>Free Delivery Discount</span><span id="billDiscount">-₹0</span></div>
+        <div class="bill-divider"></div>
+        <div class="bill-row bill-total"><span>To Pay</span><span id="billGrandTotal">₹0</span></div>
+        <p class="bill-note" id="freeDeliveryNote"></p>
+      </div>
+
+      <div class="cart-block">
+        <h3><i class="fa-solid fa-credit-card"></i> Payment Method</h3>
+        <div class="pay-row" id="payRow">
+          <button class="pay-chip active" data-pay="Cash on Delivery"><i class="fa-solid fa-money-bill-wave"></i> Cash on Delivery</button>
+          <button class="pay-chip" data-pay="UPI / Online (pay on delivery link)"><i class="fa-solid fa-mobile-screen-button"></i> UPI Payment</button>
+        </div>
+      </div>
+
+      <!-- extra spacer so content never hides behind the sticky checkout bar -->
+      <div class="cart-scroll-end"></div>
+    </div>
+
+    <div class="bottom-spacer big"></div>
+  </main>
+
+  <!-- ---------- ORDER SUMMARY SCREEN ---------- -->
+  <main id="screen-summary" class="screen">
+    <header class="subbar">
+      <button class="icon-btn back-btn" data-back="screen-cart"><i class="fa-solid fa-arrow-left"></i></button>
+      <h2>Confirm Your Order</h2>
+      <span></span>
+    </header>
+
+    <div class="summary-body">
+      <div class="summary-block">
+        <h3><i class="fa-solid fa-user"></i> Your Details</h3>
+        <label>Full Name *</label>
+        <input type="text" id="custName" placeholder="Enter your name" required>
+        <label>Phone Number *</label>
+        <input type="tel" id="custPhone" placeholder="10-digit mobile number" required maxlength="10">
+        <label>Delivery Address *</label>
+        <textarea id="custAddress" placeholder="House no, street, landmark, area..." rows="2" required></textarea>
+        <button type="button" class="use-location-btn" id="useMyLocationBtn">
+          <i class="fa-solid fa-location-crosshairs"></i> Use my current location
+        </button>
+        <label>City / Pincode</label>
+        <input type="text" id="custCity" placeholder="City and pincode" value="Agartala, Tripura">
+        <label>Preferred Delivery Date &amp; Time</label>
+        <input type="text" id="custDateTime" placeholder="E.g. 6 Sept, Evening 5-7 PM">
+      </div>
+
+      <div class="summary-block">
+        <h3><i class="fa-solid fa-location-dot"></i> Our Location</h3>
+        <p class="map-hint">NH 108B, Radha Nagar, Agartala, Tripura 799001</p>
+        <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="map-open-btn">
+          <i class="fa-solid fa-map-location-dot"></i> Open in Google Maps
+        </a>
+      </div>
+
+      <div class="summary-block">
+        <h3><i class="fa-solid fa-bag-shopping"></i> Order Summary</h3>
+        <div id="summaryItems" class="summary-items"></div>
+        <div class="bill-divider"></div>
+        <div class="bill-row"><span>Item Total</span><span id="sumItemTotal">₹0</span></div>
+        <div class="bill-row"><span>Delivery Fee</span><span id="sumDelivery">₹0</span></div>
+        <div class="bill-row" id="sumCodRow" style="display:none;"><span>COD Distance Charge <small class="cod-rate-note">(₹20/km)</small></span><span id="sumCodFee">₹0</span></div>
+        <div class="bill-row" id="sumTipRow" style="display:none;"><span>Tip</span><span id="sumTip">₹0</span></div>
+        <div class="bill-divider"></div>
+        <div class="bill-row bill-total"><span>Total Amount</span><span id="sumGrandTotal">₹0</span></div>
+        <p class="pay-method-note" id="sumPayMethod"></p>
+      </div>
+
+      <div class="summary-block">
+        <h3><i class="fa-brands fa-whatsapp"></i> Send Order Via WhatsApp</h3>
+        <p class="wa-hint">We will confirm your order and payment details on WhatsApp within minutes.</p>
+        <div class="wa-num-select" id="waNumSelect">
+          <button class="wa-num-chip active" data-num="918794398516">+91 87943 98516</button>
+        </div>
+      </div>
+      <div class="cart-scroll-end"></div>
+    </div>
+
+    <div class="summary-footer">
+      <button class="btn-whatsapp" id="sendWhatsappBtn">
+        <i class="fa-brands fa-whatsapp"></i> Send Order on WhatsApp
+      </button>
+    </div>
+  </main>
+
+  <!-- ---------- ORDER PLACED SCREEN ---------- -->
+  <main id="screen-success" class="screen">
+    <div class="success-body">
+      <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+      <h2>Order Sent!</h2>
+      <p>Your order details have been prepared. Please tap send in WhatsApp to complete your order, our team will confirm shortly.</p>
+      <div class="success-actions">
+        <button class="btn-primary" id="backHomeBtn">Back to Home</button>
+        <a href="https://wa.me/918794398516" target="_blank" rel="noopener" class="btn-whatsapp-outline"><i class="fa-brands fa-whatsapp"></i> Chat With Us</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- ---------- PROFILE / MORE SCREEN ---------- -->
+  <main id="screen-more" class="screen">
+    <header class="subbar">
+      <h2>Shadher Ghor</h2>
+      <span></span>
+    </header>
+    <div class="more-body">
+      <div class="more-profile-card">
+        <div class="more-logo"><img src="assets/icons/icon-192.png" alt="Shadher Ghor logo"></div>
+        <h3>Shadher Ghor</h3>
+        <p>Authentic street food, fresh & fast</p>
+        <div class="more-rating">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+          <span>Rated on Google</span>
+        </div>
+      </div>
+
+      <div class="more-list">
+        <a href="tel:+918794398516" class="more-item">
+          <i class="fa-solid fa-phone"></i>
+          <div><strong>Call Us</strong><span>+91 87943 98516</span></div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+        <a href="https://wa.me/918794398516" target="_blank" rel="noopener" class="more-item">
+          <i class="fa-brands fa-whatsapp"></i>
+          <div><strong>WhatsApp</strong><span>+91 87943 98516</span></div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+        <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="more-item">
+          <i class="fa-solid fa-location-dot"></i>
+          <div><strong>Our Location</strong><span>NH 108B, Radha Nagar, Agartala &middot; View on Maps</span></div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+        <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="more-item">
+          <i class="fa-solid fa-star"></i>
+          <div><strong>Rate Us on Google</strong><span>Tell others what you loved</span></div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+        <a href="https://www.instagram.com/shadherghor" target="_blank" rel="noopener" class="more-item">
+          <i class="fa-brands fa-instagram"></i>
+          <div><strong>Instagram</strong><span>@shadherghor</span></div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+        <a href="https://www.facebook.com/shadherghor" target="_blank" rel="noopener" class="more-item">
+          <i class="fa-brands fa-facebook"></i>
+          <div><strong>Facebook</strong><span>shadherghor</span></div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+        <button class="more-item" id="moreCustomBtn">
+          <i class="fa-solid fa-pen-ruler"></i>
+          <div><strong>Custom Catering Enquiry</strong><span>Tell us about your event</span></div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="more-item" id="moreInstallBtn">
+          <i class="fa-solid fa-download"></i>
+          <div><strong>Install App</strong><span>Add to home screen</span></div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <p class="app-version">Shadher Ghor App &middot; Version 2.0</p>
+    </div>
+    <div class="bottom-spacer"></div>
+  </main>
+
+  <!-- ---------- BOTTOM NAV ---------- -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-btn active" data-screen="screen-home">
+      <i class="fa-solid fa-house"></i><span>Home</span>
+    </button>
+    <button class="nav-btn" data-screen="screen-menu">
+      <i class="fa-solid fa-utensils"></i><span>Menu</span>
+    </button>
+    <button class="nav-btn" data-screen="screen-cart">
+      <i class="fa-solid fa-bag-shopping"></i><span>Cart</span>
+      <span class="nav-badge hidden" id="navCartBadge">0</span>
+    </button>
+    <button class="nav-btn" data-screen="screen-more">
+      <i class="fa-solid fa-user"></i><span>More</span>
+    </button>
+  </nav>
+
+  <!-- ---------- FLOATING CART BAR ---------- -->
+  <div class="float-cart hidden" id="floatCart">
+    <div class="float-cart-info">
+      <span class="float-cart-count" id="floatCartCount">0 items</span>
+      <span class="float-cart-total" id="floatCartTotal">₹0</span>
+    </div>
+    <button class="float-cart-btn" id="floatCartBtn">View Cart <i class="fa-solid fa-arrow-right"></i></button>
+    <button class="float-cart-close" id="floatCartClose" aria-label="Dismiss"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+
+</div>
+
+<!-- ===================== PRODUCT DETAIL SHEET ===================== -->
+<div class="sheet-backdrop" id="productBackdrop"></div>
+<div class="sheet product-sheet" id="productSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" id="closeProductSheet"><i class="fa-solid fa-xmark"></i></button>
+  <div class="product-sheet-body" id="productSheetBody"></div>
+</div>
+
+<!-- ===================== LOCATION SHEET ===================== -->
+<div class="sheet-backdrop" id="locationBackdrop"></div>
+<div class="sheet location-sheet" id="locationSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" id="closeLocationSheet"><i class="fa-solid fa-xmark"></i></button>
+  <h3><i class="fa-solid fa-location-dot"></i> Delivery Location</h3>
+  <p class="loc-desc">Enter your delivery area, or auto-detect it so we know where to send your food</p>
+  <button class="auto-locate-btn" id="autoLocateBtn">
+    <i class="fa-solid fa-location-crosshairs"></i>
+    <span id="autoLocateLabel">Auto-detect my location</span>
+  </button>
+  <div class="loc-divider"><span>or type manually</span></div>
+  <input type="text" id="locationInput" placeholder="E.g. Krishna Nagar, Agartala, Tripura">
+  <button class="btn-primary" id="saveLocationBtn">Save Location</button>
+  <div class="loc-divider"><span>or</span></div>
+  <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="map-open-btn">
+    <i class="fa-solid fa-map-location-dot"></i> View Our Location on Map
+  </a>
+</div>
+
+<!-- ===================== CONTACT SHEET ===================== -->
+<div class="sheet-backdrop" id="contactBackdrop"></div>
+<div class="sheet contact-sheet" id="contactSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" id="closeContactSheet"><i class="fa-solid fa-xmark"></i></button>
+  <h3><i class="fa-solid fa-headset"></i> Contact Us</h3>
+  <div class="contact-grid">
+    <a href="tel:+918794398516" class="contact-tile">
+      <i class="fa-solid fa-phone"></i><span>Call</span><small>87943 98516</small>
+    </a>
+    <a href="https://wa.me/918794398516" target="_blank" rel="noopener" class="contact-tile wa">
+      <i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span><small>87943 98516</small>
+    </a>
+    <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="contact-tile">
+      <i class="fa-solid fa-map-location-dot"></i><span>Directions</span><small>Google Maps</small>
+    </a>
+    <a href="https://www.instagram.com/shadherghor" target="_blank" rel="noopener" class="contact-tile">
+      <i class="fa-brands fa-instagram"></i><span>Instagram</span><small>Follow us</small>
+    </a>
+    <a href="https://www.facebook.com/shadherghor" target="_blank" rel="noopener" class="contact-tile">
+      <i class="fa-brands fa-facebook"></i><span>Facebook</span><small>Follow us</small>
+    </a>
+  </div>
+</div>
+
+<!-- ===================== CUSTOM ENQUIRY SHEET ===================== -->
+<div class="sheet-backdrop" id="customBackdrop"></div>
+<div class="sheet custom-sheet" id="customSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" id="closeCustomSheet"><i class="fa-solid fa-xmark"></i></button>
+  <h3><i class="fa-solid fa-pen-ruler"></i> Custom Catering Enquiry</h3>
+  <p class="loc-desc">Tell us about your event and we'll get back to you on WhatsApp with a custom menu and price.</p>
+
+  <div class="psheet-block">
+    <label>Event Type</label>
+    <div class="option-row" id="customOccasionOptions">
+      <button type="button" class="option-chip active" data-occasion="Birthday Party">Birthday Party</button>
+      <button type="button" class="option-chip" data-occasion="Corporate Event">Corporate Event</button>
+      <button type="button" class="option-chip" data-occasion="Wedding">Wedding</button>
+      <button type="button" class="option-chip" data-occasion="House Party">House Party</button>
+      <button type="button" class="option-chip" data-occasion="Other">Other</button>
+    </div>
+  </div>
+
+  <div class="psheet-block">
+    <label>Dishes You're Interested In</label>
+    <input type="text" id="customTheme" class="text-field" placeholder="e.g. Momo platter, Biryani, Chowmein, Burgers...">
+  </div>
+
+  <div class="psheet-block">
+    <label>Number of People</label>
+    <input type="text" id="customSize" class="text-field" placeholder="e.g. 20-25 people">
+  </div>
+
+  <div class="psheet-block">
+    <label>Preferred Date &amp; Time</label>
+    <input type="datetime-local" id="customDate" class="text-field">
+  </div>
+
+  <div class="psheet-block">
+    <label>Special Instructions <span class="optional-tag">Optional</span></label>
+    <textarea id="customInstructions" class="text-field" rows="3" placeholder="Dietary restrictions, preferred cuisine, delivery notes, etc."></textarea>
+  </div>
+
+  <button class="btn-whatsapp" id="sendCustomEnquiryBtn">
+    <i class="fa-brands fa-whatsapp"></i> Send Enquiry on WhatsApp
+  </button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
