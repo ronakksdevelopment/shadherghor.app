@@ -9,7 +9,7 @@ const CATEGORIES = [
   { id: "biryani", name: "Biryani", icon: "fa-solid fa-utensil-spoon", tag: "Flavorful rice dishes" },
   { id: "burgers", name: "Burgers & Sandwiches", icon: "fa-solid fa-burger", tag: "Loaded & fresh" },
   { id: "rolls", name: "Rolls & Wraps", icon: "fa-solid fa-hotdog", tag: "Street-style rolls" },
-  { id: "snacks", name: "Snacks & Sides", icon: "fa-solid fa-drumstick-bite", tag: "Perfect bites" },
+  { id: "snacks", name: "Snacks & Sides", icon: "fa-solid fa-utensils", tag: "Perfect bites" },
   { id: "beverages", name: "Beverages", icon: "fa-solid fa-mug-saucer", tag: "Cool drinks & more" },
   { id: "combo", name: "Combo Meals", icon: "fa-solid fa-bag-shopping", tag: "Best value deals" },
 ];
