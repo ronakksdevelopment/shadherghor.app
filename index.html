@@ -33,7 +33,7 @@
   <div class="splash-logo-wrap">
     <div class="splash-logo"><img src="assets/icons/icon-192.png" alt="Swader Ghor logo"></div>
     <h1 class="splash-title">Swader<span class="amp">Ghor</span></h1>
-    <p class="splash-tag">Authentic street food, fresh & fast</p>
+    <p class="splash-tag" data-i18n="splashTag">Authentic street food, fresh & fast</p>
   </div>
   <div class="splash-loader"><span></span><span></span><span></span></div>
 </div>
@@ -42,10 +42,10 @@
 <div id="installBanner" class="install-banner hidden">
   <div class="install-icon"><img src="assets/icons/icon-96.png" alt=""></div>
   <div class="install-text">
-    <strong>Install Swader Ghor</strong>
-    <span>Add to home screen for the full app experience</span>
+    <strong data-i18n="installTitle">Install Swader Ghor</strong>
+    <span data-i18n="installSub">Add to home screen for the full app experience</span>
   </div>
-  <button id="installBtn" class="btn-install">Install</button>
+  <button id="installBtn" class="btn-install" data-i18n="installBtn">Install</button>
   <button id="dismissInstall" class="install-close" aria-label="Dismiss"><i class="fa-solid fa-xmark"></i></button>
 </div>
 
@@ -54,14 +54,6 @@
 
   <!-- ---------- HOME SCREEN ---------- -->
   <main id="screen-home" class="screen active">
-
-    <div class="lang-strip">
-      <button class="lang-switch-btn" id="openLanguageSheet" aria-label="Change language">
-        <i class="fa-solid fa-language"></i>
-        <span id="langSwitchLabel">EN</span>
-        <i class="fa-solid fa-chevron-down lang-chevron"></i>
-      </button>
-    </div>
 
     <header class="topbar">
       <div class="topbar-loc" id="openLocationSheet">
@@ -166,7 +158,7 @@
   <main id="screen-menu" class="screen">
     <header class="subbar">
       <button class="icon-btn back-btn" data-back="screen-home" aria-label="Back to home"><i class="fa-solid fa-arrow-left"></i></button>
-      <h2 id="menuScreenTitle">All Items</h2>
+      <h2 id="menuScreenTitle" data-i18n="allItems">All Items</h2>
       <button class="icon-btn" id="openSearch2" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
     </header>
     <div class="cat-chip-row" id="chipRow"></div>
@@ -180,14 +172,14 @@
       <button class="icon-btn back-btn" data-back="screen-home" aria-label="Back to home"><i class="fa-solid fa-arrow-left"></i></button>
       <div class="search-input-wrap">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchInput" name="searchInput" aria-label="Search menu" placeholder="Search for momo, biryani, burgers..." autocomplete="off">
-        <i class="fa-solid fa-xmark search-clear" id="clearSearch" role="button" tabindex="0" aria-label="Clear search"></i>
+        <input type="text" id="searchInput" name="searchInput" aria-label="Search menu" data-i18n-aria="searchMenuAria" data-i18n-ph="searchPlaceholder" placeholder="Search for momo, biryani, burgers..." autocomplete="off">
+        <i class="fa-solid fa-xmark search-clear" id="clearSearch" role="button" tabindex="0" aria-label="Clear search" data-i18n-aria="clearSearchAria"></i>
       </div>
     </header>
     <div class="product-list" id="searchResults"></div>
     <div class="search-empty hidden" id="searchEmpty">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <p>No items found. Try a different search.</p>
+      <p data-i18n="searchEmpty">No items found. Try a different search.</p>
     </div>
     <div class="bottom-spacer"></div>
   </main>
@@ -212,20 +204,20 @@
 
       <div class="cart-block">
         <h3><i class="fa-solid fa-note-sticky"></i> <span data-i18n="addNote">Add a note for the chef</span></h3>
-        <textarea id="orderNote" name="orderNote" aria-label="Note for the chef" placeholder="E.g. Extra spicy, no onions, make it mild..." rows="3"></textarea>
+        <textarea id="orderNote" name="orderNote" aria-label="Note for the chef" data-i18n-ph="notePlaceholder" placeholder="E.g. Extra spicy, no onions, make it mild..." rows="3"></textarea>
       </div>
 
       <div class="cart-block">
         <h3><i class="fa-solid fa-mug-hot"></i> <span data-i18n="addTip">Add a tip for our chefs</span></h3>
-        <p class="tip-sub">100% of your tip goes directly to the kitchen team</p>
+        <p class="tip-sub" data-i18n="tipSub">100% of your tip goes directly to the kitchen team</p>
         <div class="tip-row" id="tipRow">
-          <button class="tip-chip active" data-tip="0">No tip</button>
+          <button class="tip-chip active" data-tip="0" data-i18n="noTip">No tip</button>
           <button class="tip-chip" data-tip="20">₹20</button>
           <button class="tip-chip" data-tip="50">₹50</button>
           <button class="tip-chip" data-tip="100">₹100</button>
           <div class="tip-custom-wrap">
             <span>₹</span>
-            <input type="number" id="tipCustom" name="tipCustom" inputmode="numeric" aria-label="Custom tip amount" placeholder="Other" min="0">
+            <input type="number" id="tipCustom" name="tipCustom" inputmode="numeric" aria-label="Custom tip amount" data-i18n-ph="tipOther" placeholder="Other" min="0">
           </div>
         </div>
       </div>
@@ -234,8 +226,8 @@
         <h3><i class="fa-solid fa-receipt"></i> <span data-i18n="billDetails">Bill Details</span></h3>
         <div class="bill-row"><span data-i18n="itemTotal">Item Total</span><span id="billItemTotal">₹0</span></div>
         <div class="bill-row"><span data-i18n="deliveryFee">Delivery Fee</span><span id="billDelivery">₹0</span></div>
-        <div class="bill-row" id="billTipRow" style="display:none;"><span>Tip for Chefs</span><span id="billTip">₹0</span></div>
-        <div class="bill-row discount-row" id="billDiscountRow" style="display:none;"><span>Free Delivery Discount</span><span id="billDiscount">-₹0</span></div>
+        <div class="bill-row" id="billTipRow" style="display:none;"><span data-i18n="tipForChefs">Tip for Chefs</span><span id="billTip">₹0</span></div>
+        <div class="bill-row discount-row" id="billDiscountRow" style="display:none;"><span data-i18n="freeDeliveryDiscount">Free Delivery Discount</span><span id="billDiscount">-₹0</span></div>
         <div class="bill-divider"></div>
         <div class="bill-row bill-total"><span data-i18n="toPay">To Pay</span><span id="billGrandTotal">₹0</span></div>
         <p class="bill-note" id="freeDeliveryNote"></p>
@@ -268,44 +260,54 @@
       <div class="summary-block">
         <h3><i class="fa-solid fa-user"></i> <span data-i18n="yourDetails">Your Details</span></h3>
         <label for="custName" data-i18n="fullName">Full Name *</label>
-        <input type="text" id="custName" name="custName" placeholder="Enter your name" required autocomplete="name">
+        <input type="text" id="custName" name="custName" data-i18n-ph="fullNamePlaceholder" placeholder="Enter your name" required autocomplete="name">
         <label for="custPhone" data-i18n="phoneNumber">Phone Number *</label>
-        <input type="tel" id="custPhone" name="custPhone" inputmode="numeric" pattern="[0-9]*" placeholder="10-digit mobile number" required maxlength="10" autocomplete="tel">
+        <input type="tel" id="custPhone" name="custPhone" inputmode="numeric" pattern="[0-9]*" data-i18n-ph="phoneNumberPlaceholder" placeholder="10-digit mobile number" required maxlength="10" autocomplete="tel">
         <label for="custAddress" data-i18n="deliveryAddress">Delivery Address *</label>
-        <textarea id="custAddress" name="custAddress" placeholder="House no, street, landmark, area..." rows="2" required></textarea>
+        <textarea id="custAddress" name="custAddress" data-i18n-ph="deliveryAddressPlaceholder" placeholder="House no, street, landmark, area..." rows="2" required></textarea>
         <button type="button" class="use-location-btn" id="useMyLocationBtn">
           <i class="fa-solid fa-location-crosshairs"></i> <span data-i18n="useMyLocation">Use my current location</span>
         </button>
-        <label for="custCity">City / Pincode</label>
-        <input type="text" id="custCity" name="custCity" placeholder="City and pincode" value="Agartala, Tripura" autocomplete="address-level2">
-        <label for="custDateTime">Preferred Delivery Date &amp; Time</label>
-        <input type="text" id="custDateTime" name="custDateTime" placeholder="E.g. 6 Sept, Evening 5-7 PM">
-      </div>
+        <label for="custCity" data-i18n="cityPincode">City / Pincode</label>
+        <input type="text" id="custCity" name="custCity" data-i18n-ph="cityPincodePlaceholder" placeholder="City and pincode" value="Agartala, Tripura" autocomplete="address-level2">
+        <label for="custDateTime" data-i18n="preferredDateTime">Preferred Delivery Date &amp; Time</label>
+        <input type="text" id="custDateTime" name="custDateTime" data-i18n-ph="preferredDateTimePlaceholder" placeholder="E.g. 6 Sept, Evening 5-7 PM">
 
-      <div class="summary-block">
-        <h3><i class="fa-solid fa-location-dot"></i> Our Location</h3>
-        <p class="map-hint">NH 108B, Radha Nagar, Agartala, Tripura 799001</p>
-        <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="map-open-btn">
-          <i class="fa-solid fa-map-location-dot"></i> Open in Google Maps
+        <label for="custCoords" data-i18n="deliveryCoordinatesLabel">Delivery Coordinates</label>
+        <div class="coords-field-row">
+          <input type="text" id="custCoords" name="custCoords" data-i18n-ph="coordinatesPlaceholder" placeholder="Latitude, Longitude" inputmode="decimal" autocomplete="off">
+          <button type="button" class="coords-locate-btn" id="detectCoordsBtn" aria-label="Detect my coordinates"><i class="fa-solid fa-location-crosshairs"></i></button>
+        </div>
+        <p class="field-hint" id="coordsHint" data-i18n="deliveryCoordinatesHint">Auto-filled from GPS &mdash; you can edit it if the pin isn't quite right</p>
+        <a href="#" id="coordsMapLink" class="coords-map-link hidden" target="_blank" rel="noopener">
+          <i class="fa-solid fa-map-location-dot"></i> <span data-i18n="openInMaps">Open in Maps</span>
         </a>
       </div>
 
       <div class="summary-block">
-        <h3><i class="fa-solid fa-bag-shopping"></i> Order Summary</h3>
+        <h3><i class="fa-solid fa-location-dot"></i> <span data-i18n="ourLocation">Our Location</span></h3>
+        <p class="map-hint">NH 108B, Radha Nagar, Agartala, Tripura 799001</p>
+        <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="map-open-btn">
+          <i class="fa-solid fa-map-location-dot"></i> <span data-i18n="openInGoogleMaps">Open in Google Maps</span>
+        </a>
+      </div>
+
+      <div class="summary-block">
+        <h3><i class="fa-solid fa-bag-shopping"></i> <span data-i18n="orderSummary">Order Summary</span></h3>
         <div id="summaryItems" class="summary-items"></div>
         <div class="bill-divider"></div>
-        <div class="bill-row"><span>Item Total</span><span id="sumItemTotal">₹0</span></div>
-        <div class="bill-row"><span>Delivery Fee</span><span id="sumDelivery">₹0</span></div>
-        <div class="bill-row" id="sumCodRow" style="display:none;"><span>COD Distance Charge <small class="cod-rate-note">(₹20/km)</small></span><span id="sumCodFee">₹0</span></div>
-        <div class="bill-row" id="sumTipRow" style="display:none;"><span>Tip</span><span id="sumTip">₹0</span></div>
+        <div class="bill-row"><span data-i18n="itemTotal">Item Total</span><span id="sumItemTotal">₹0</span></div>
+        <div class="bill-row"><span data-i18n="deliveryFee">Delivery Fee</span><span id="sumDelivery">₹0</span></div>
+        <div class="bill-row" id="sumDistanceRow" style="display:none;"><span data-i18n="deliveryDistance">Delivery Distance</span><span id="sumDistanceValue"></span></div>
+        <div class="bill-row" id="sumTipRow" style="display:none;"><span data-i18n="tip">Tip</span><span id="sumTip">₹0</span></div>
         <div class="bill-divider"></div>
-        <div class="bill-row bill-total"><span>Total Amount</span><span id="sumGrandTotal">₹0</span></div>
+        <div class="bill-row bill-total"><span data-i18n="totalAmount">Total Amount</span><span id="sumGrandTotal">₹0</span></div>
         <p class="pay-method-note" id="sumPayMethod"></p>
       </div>
 
       <div class="summary-block">
-        <h3><i class="fa-brands fa-whatsapp"></i> Send Order Via WhatsApp</h3>
-        <p class="wa-hint">We will confirm your order and payment details on WhatsApp within minutes.</p>
+        <h3><i class="fa-brands fa-whatsapp"></i> <span data-i18n="sendOrderViaWhatsapp">Send Order Via WhatsApp</span></h3>
+        <p class="wa-hint" data-i18n="waHint">We will confirm your order and payment details on WhatsApp within minutes.</p>
         <div class="wa-num-select" id="waNumSelect">
           <button class="wa-num-chip active" data-num="918794398516">+91 87943 98516</button>
         </div>
@@ -325,7 +327,7 @@
     <div class="success-body">
       <div class="success-icon"><i class="fa-solid fa-check"></i></div>
       <h2 data-i18n="orderSent">Order Sent!</h2>
-      <p>Your order details have been prepared. Please tap send in WhatsApp to complete your order, our team will confirm shortly.</p>
+      <p data-i18n="orderSentBody">Your order details have been prepared. Please tap send in WhatsApp to complete your order, our team will confirm shortly.</p>
       <div class="success-actions">
         <button class="btn-primary" id="backHomeBtn" data-i18n="backHome">Back to Home</button>
         <a href="https://wa.me/918794398516" target="_blank" rel="noopener" class="btn-whatsapp-outline"><i class="fa-brands fa-whatsapp"></i> <span data-i18n="chatWithUs">Chat With Us</span></a>
@@ -336,59 +338,66 @@
   <!-- ---------- PROFILE / MORE SCREEN ---------- -->
   <main id="screen-more" class="screen">
     <header class="subbar">
-      <h2>Swader Ghor</h2>
+      <h2 data-i18n="moreTitle">Swader Ghor</h2>
       <span></span>
     </header>
     <div class="more-body">
       <div class="more-profile-card">
         <div class="more-logo"><img src="assets/icons/icon-192.png" alt="Swader Ghor logo"></div>
         <h3>Swader Ghor</h3>
-        <p>Authentic street food, fresh & fast</p>
+        <p data-i18n="splashTag">Authentic street food, fresh & fast</p>
         <div class="more-rating">
           <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-          <span>Rated on Google</span>
+          <span data-i18n="ratedOnGoogle">Rated on Google</span>
         </div>
       </div>
 
       <div class="more-list">
         <a href="tel:+918794398516" class="more-item">
           <i class="fa-solid fa-phone"></i>
-          <div><strong>Call Us</strong><span>+91 87943 98516</span></div>
+          <div><strong data-i18n="callUs">Call Us</strong><span>+91 87943 98516</span></div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
         <a href="https://wa.me/918794398516" target="_blank" rel="noopener" class="more-item">
           <i class="fa-brands fa-whatsapp"></i>
-          <div><strong>WhatsApp</strong><span>+91 87943 98516</span></div>
+          <div><strong data-i18n="whatsapp">WhatsApp</strong><span>+91 87943 98516</span></div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
-        <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="more-item">
-          <i class="fa-solid fa-location-dot"></i>
-          <div><strong>Our Location</strong><span>NH 108B, Radha Nagar, Agartala &middot; View on Maps</span></div>
-          <i class="fa-solid fa-chevron-right"></i>
-        </a>
-        <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="more-item">
+        <div class="more-item more-item-split">
+          <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="more-item-main">
+            <i class="fa-solid fa-location-dot"></i>
+            <div><strong data-i18n="ourLocationItem">Our Location</strong><span>NH 108B, Radha Nagar, Agartala</span></div>
+          </a>
+          <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="more-item-action" data-i18n="viewOnMaps">View on Google Maps</a>
+        </div>
+        <a href="https://search.google.com/local/writereview?placeid=" target="_blank" rel="noopener" class="more-item" id="rateUsOnGoogleItem">
           <i class="fa-solid fa-star"></i>
-          <div><strong>Rate Us on Google</strong><span>Tell others what you loved</span></div>
+          <div><strong data-i18n="rateUsOnGoogle">Rate Us on Google</strong><span data-i18n="rateUsOnGoogleSub">Tell others what you loved</span></div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
         <a href="https://www.instagram.com/swaderghor" target="_blank" rel="noopener" class="more-item">
           <i class="fa-brands fa-instagram"></i>
-          <div><strong>Instagram</strong><span>@swaderghor</span></div>
+          <div><strong data-i18n="instagram">Instagram</strong><span>@swaderghor</span></div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
         <a href="https://www.facebook.com/swaderghor" target="_blank" rel="noopener" class="more-item">
           <i class="fa-brands fa-facebook"></i>
-          <div><strong>Facebook</strong><span>swaderghor</span></div>
+          <div><strong data-i18n="facebook">Facebook</strong><span>swaderghor</span></div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
         <button class="more-item" id="moreCustomBtn">
           <i class="fa-solid fa-pen-ruler"></i>
-          <div><strong>Custom Catering Enquiry</strong><span>Tell us about your event</span></div>
+          <div><strong data-i18n="customCateringEnquiry">Custom Catering Enquiry</strong><span data-i18n="customCateringEnquirySub">Tell us about your event</span></div>
           <i class="fa-solid fa-chevron-right"></i>
         </button>
         <button class="more-item" id="moreInstallBtn">
           <i class="fa-solid fa-download"></i>
-          <div><strong>Install App</strong><span>Add to home screen</span></div>
+          <div><strong data-i18n="installAppItem">Install App</strong><span data-i18n="installAppItemSub">Add to home screen</span></div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="more-item" id="openLanguageSheetMore">
+          <i class="fa-solid fa-language"></i>
+          <div><strong data-i18n="languageTitle">Language</strong><span id="moreLanguageValue">English</span></div>
           <i class="fa-solid fa-chevron-right"></i>
         </button>
       </div>
@@ -440,18 +449,18 @@
 <div class="sheet location-sheet" id="locationSheet">
   <div class="sheet-handle"></div>
   <button class="sheet-close" id="closeLocationSheet"><i class="fa-solid fa-xmark"></i></button>
-  <h3><i class="fa-solid fa-location-dot"></i> Delivery Location</h3>
-  <p class="loc-desc">Enter your delivery area, or auto-detect it so we know where to send your food</p>
+  <h3><i class="fa-solid fa-location-dot"></i> <span data-i18n="deliveryLocationTitle">Delivery Location</span></h3>
+  <p class="loc-desc" data-i18n="deliveryLocationDesc">Enter your delivery area, or auto-detect it so we know where to send your food</p>
   <button class="auto-locate-btn" id="autoLocateBtn">
     <i class="fa-solid fa-location-crosshairs"></i>
-    <span id="autoLocateLabel">Auto-detect my location</span>
+    <span id="autoLocateLabel" data-i18n="autoDetectLocation">Auto-detect my location</span>
   </button>
-  <div class="loc-divider"><span>or type manually</span></div>
-  <input type="text" id="locationInput" name="locationInput" aria-label="Delivery location" placeholder="E.g. Krishna Nagar, Agartala, Tripura">
-  <button class="btn-primary" id="saveLocationBtn">Save Location</button>
-  <div class="loc-divider"><span>or</span></div>
+  <div class="loc-divider"><span data-i18n="orTypeManually">or type manually</span></div>
+  <input type="text" id="locationInput" name="locationInput" aria-label="Delivery location" data-i18n-aria="deliveryLocationAria" data-i18n-ph="locationInputPlaceholder" placeholder="E.g. Krishna Nagar, Agartala, Tripura">
+  <button class="btn-primary" id="saveLocationBtn" data-i18n="saveLocation">Save Location</button>
+  <div class="loc-divider"><span data-i18n="or">or</span></div>
   <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="map-open-btn">
-    <i class="fa-solid fa-map-location-dot"></i> View Our Location on Map
+    <i class="fa-solid fa-map-location-dot"></i> <span data-i18n="viewLocationOnMap">View Our Location on Map</span>
   </a>
 </div>
 
@@ -460,22 +469,22 @@
 <div class="sheet contact-sheet" id="contactSheet">
   <div class="sheet-handle"></div>
   <button class="sheet-close" id="closeContactSheet"><i class="fa-solid fa-xmark"></i></button>
-  <h3><i class="fa-solid fa-headset"></i> Contact Us</h3>
+  <h3><i class="fa-solid fa-headset"></i> <span data-i18n="contactUs">Contact Us</span></h3>
   <div class="contact-grid">
     <a href="tel:+918794398516" class="contact-tile">
-      <i class="fa-solid fa-phone"></i><span>Call</span><small>87943 98516</small>
+      <i class="fa-solid fa-phone"></i><span data-i18n="call">Call</span><small>87943 98516</small>
     </a>
     <a href="https://wa.me/918794398516" target="_blank" rel="noopener" class="contact-tile wa">
-      <i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span><small>87943 98516</small>
+      <i class="fa-brands fa-whatsapp"></i><span data-i18n="whatsapp">WhatsApp</span><small>87943 98516</small>
     </a>
     <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="contact-tile">
-      <i class="fa-solid fa-map-location-dot"></i><span>Directions</span><small>Google Maps</small>
+      <i class="fa-solid fa-map-location-dot"></i><span data-i18n="directions">Directions</span><small data-i18n="googleMaps">Google Maps</small>
     </a>
     <a href="https://www.instagram.com/swaderghor" target="_blank" rel="noopener" class="contact-tile">
-      <i class="fa-brands fa-instagram"></i><span>Instagram</span><small>Follow us</small>
+      <i class="fa-brands fa-instagram"></i><span data-i18n="instagram">Instagram</span><small data-i18n="followUs">Follow us</small>
     </a>
     <a href="https://www.facebook.com/swaderghor" target="_blank" rel="noopener" class="contact-tile">
-      <i class="fa-brands fa-facebook"></i><span>Facebook</span><small>Follow us</small>
+      <i class="fa-brands fa-facebook"></i><span data-i18n="facebook">Facebook</span><small data-i18n="followUs">Follow us</small>
     </a>
   </div>
 </div>
@@ -485,8 +494,8 @@
 <div class="sheet language-sheet" id="languageSheet">
   <div class="sheet-handle"></div>
   <button class="sheet-close" id="closeLanguageSheet"><i class="fa-solid fa-xmark"></i></button>
-  <h3><i class="fa-solid fa-language"></i> Language / ভাষা / भाषा</h3>
-  <p class="loc-desc">Choose your preferred language for the app</p>
+  <h3><i class="fa-solid fa-language"></i> <span data-i18n="languageTitle">Language</span></h3>
+  <p class="loc-desc" data-i18n="languageDesc">Choose your preferred language for the app</p>
   <div class="language-list" id="languageList"></div>
 </div>
 
@@ -495,11 +504,11 @@
 <div class="sheet confirm-sheet" id="confirmSheet">
   <div class="sheet-handle"></div>
   <div class="confirm-icon"><i class="fa-solid fa-triangle-exclamation" id="confirmIcon"></i></div>
-  <h3 class="confirm-title" id="confirmTitle">Are you sure?</h3>
-  <p class="loc-desc" id="confirmMessage">This action cannot be undone.</p>
+  <h3 class="confirm-title" id="confirmTitle" data-i18n="areYouSure">Are you sure?</h3>
+  <p class="loc-desc" id="confirmMessage" data-i18n="cannotBeUndone">This action cannot be undone.</p>
   <div class="confirm-actions">
-    <button class="btn-ghost" id="confirmCancelBtn">Cancel</button>
-    <button class="btn-danger" id="confirmOkBtn">Confirm</button>
+    <button class="btn-ghost" id="confirmCancelBtn" data-i18n="cancel">Cancel</button>
+    <button class="btn-danger" id="confirmOkBtn" data-i18n="confirm">Confirm</button>
   </div>
 </div>
 
@@ -508,37 +517,37 @@
 <div class="sheet upi-sheet" id="upiSheet">
   <div class="sheet-handle"></div>
   <button class="sheet-close" id="closeUpiSheet"><i class="fa-solid fa-xmark"></i></button>
-  <h3><i class="fa-solid fa-mobile-screen-button"></i> Pay via UPI</h3>
-  <p class="loc-desc">Scan the QR code or copy the UPI ID below to pay, then place your order &mdash; we'll confirm your payment on WhatsApp.</p>
+  <h3><i class="fa-solid fa-mobile-screen-button"></i> <span data-i18n="payViaUpi">Pay via UPI</span></h3>
+  <p class="loc-desc" data-i18n="payViaUpiDesc">Scan the QR code or copy the UPI ID below to pay, then place your order &mdash; we'll confirm your payment on WhatsApp.</p>
 
   <div class="upi-qr-wrap">
     <div class="upi-qr-box" id="upiQrBox">
       <i class="fa-solid fa-qrcode"></i>
-      <span>Demo QR &middot; Replace with real UPI QR</span>
+      <span data-i18n="demoQrLabel">Demo QR &middot; Replace with real UPI QR</span>
     </div>
   </div>
 
   <div class="copy-field">
     <div class="copy-field-text">
-      <span class="copy-field-label">UPI ID</span>
+      <span class="copy-field-label" data-i18n="upiIdLabel">UPI ID</span>
       <span class="copy-field-value" id="upiIdValue">swaderghor@upi</span>
     </div>
     <button class="copy-btn" id="copyUpiBtn" data-copy-target="upiIdValue" aria-label="Copy UPI ID">
-      <i class="fa-solid fa-copy"></i> Copy
+      <i class="fa-solid fa-copy"></i> <span data-i18n="copy">Copy</span>
     </button>
   </div>
 
   <div class="copy-field">
     <div class="copy-field-text">
-      <span class="copy-field-label">Phone Number</span>
+      <span class="copy-field-label" data-i18n="phoneNumberLabel">Phone Number</span>
       <span class="copy-field-value" id="upiPhoneValue">+91 87943 98516</span>
     </div>
     <button class="copy-btn" id="copyPhoneBtn" data-copy-target="upiPhoneValue" aria-label="Copy phone number">
-      <i class="fa-solid fa-copy"></i> Copy
+      <i class="fa-solid fa-copy"></i> <span data-i18n="copy">Copy</span>
     </button>
   </div>
 
-  <button class="btn-primary" id="upiDoneBtn">Got it, Continue</button>
+  <button class="btn-primary" id="upiDoneBtn" data-i18n="gotItContinue">Got it, Continue</button>
 </div>
 
 <!-- ===================== CUSTOM ENQUIRY SHEET ===================== -->
@@ -546,43 +555,88 @@
 <div class="sheet custom-sheet" id="customSheet">
   <div class="sheet-handle"></div>
   <button class="sheet-close" id="closeCustomSheet"><i class="fa-solid fa-xmark"></i></button>
-  <h3><i class="fa-solid fa-pen-ruler"></i> Custom Catering Enquiry</h3>
-  <p class="loc-desc">Tell us about your event and we'll get back to you on WhatsApp with a custom menu and price.</p>
+  <h3><i class="fa-solid fa-pen-ruler"></i> <span data-i18n="customEnquiryTitle">Custom Catering Enquiry</span></h3>
+  <p class="loc-desc" data-i18n="customEnquiryDesc">Tell us about your event and we'll get back to you on WhatsApp with a custom menu and price.</p>
 
   <div class="psheet-block">
-    <span class="field-label" id="customOccasionLabel">Event Type</span>
-    <div class="option-row" id="customOccasionOptions" role="group" aria-labelledby="customOccasionLabel">
-      <button type="button" class="option-chip active" data-occasion="Birthday Party">Birthday Party</button>
-      <button type="button" class="option-chip" data-occasion="Corporate Event">Corporate Event</button>
-      <button type="button" class="option-chip" data-occasion="Wedding">Wedding</button>
-      <button type="button" class="option-chip" data-occasion="House Party">House Party</button>
-      <button type="button" class="option-chip" data-occasion="Other">Other</button>
+    <span class="field-label" id="customOccasionLabel" data-i18n="eventType">Event Type</span>
+    <button type="button" class="themed-select" id="customOccasionSelect" aria-haspopup="listbox" aria-labelledby="customOccasionLabel">
+      <span id="customOccasionSelectValue" data-i18n="birthdayParty">Birthday Party</span>
+      <i class="fa-solid fa-chevron-down"></i>
+    </button>
+  </div>
+
+  <div class="psheet-block">
+    <label for="customTheme" data-i18n="dishesInterested">Dishes You're Interested In</label>
+    <input type="text" id="customTheme" name="customTheme" class="text-field" data-i18n-ph="dishesInterestedPlaceholder" placeholder="e.g. Momo platter, Biryani, Chowmein, Burgers...">
+  </div>
+
+  <div class="psheet-block">
+    <label for="customSize" data-i18n="numberOfPeople">Number of People</label>
+    <input type="text" id="customSize" name="customSize" class="text-field" data-i18n-ph="numberOfPeoplePlaceholder" placeholder="e.g. 20-25 people">
+  </div>
+
+  <div class="psheet-block">
+    <span class="field-label" id="customDateTimeLabel" data-i18n="preferredDateTimeLabel">Preferred Date &amp; Time</span>
+    <div class="custom-datetime-row" role="group" aria-labelledby="customDateTimeLabel">
+      <button type="button" class="themed-datefield" id="customDateBtn">
+        <i class="fa-solid fa-calendar-days"></i>
+        <span id="customDateBtnLabel" data-i18n="chooseDate">Choose date</span>
+      </button>
+      <button type="button" class="themed-datefield" id="customTimeBtn">
+        <i class="fa-solid fa-clock"></i>
+        <span id="customTimeBtnLabel" data-i18n="chooseTime">Choose time</span>
+      </button>
     </div>
   </div>
 
   <div class="psheet-block">
-    <label for="customTheme">Dishes You're Interested In</label>
-    <input type="text" id="customTheme" name="customTheme" class="text-field" placeholder="e.g. Momo platter, Biryani, Chowmein, Burgers...">
-  </div>
-
-  <div class="psheet-block">
-    <label for="customSize">Number of People</label>
-    <input type="text" id="customSize" name="customSize" class="text-field" placeholder="e.g. 20-25 people">
-  </div>
-
-  <div class="psheet-block">
-    <label for="customDate">Preferred Date &amp; Time</label>
-    <input type="datetime-local" id="customDate" name="customDate" class="text-field">
-  </div>
-
-  <div class="psheet-block">
-    <label for="customInstructions">Special Instructions <span class="optional-tag">Optional</span></label>
-    <textarea id="customInstructions" name="customInstructions" class="text-field" rows="3" placeholder="Dietary restrictions, preferred cuisine, delivery notes, etc."></textarea>
+    <label for="customInstructions" data-i18n="specialInstructions">Special Instructions <span class="optional-tag" data-i18n="optional">Optional</span></label>
+    <textarea id="customInstructions" name="customInstructions" class="text-field" rows="3" data-i18n-ph="specialInstructionsPlaceholder" placeholder="Dietary restrictions, preferred cuisine, delivery notes, etc."></textarea>
   </div>
 
   <button class="btn-whatsapp" id="sendCustomEnquiryBtn">
-    <i class="fa-brands fa-whatsapp"></i> Send Enquiry on WhatsApp
+    <i class="fa-brands fa-whatsapp"></i> <span data-i18n="sendEnquiryWhatsapp">Send Enquiry on WhatsApp</span>
   </button>
+</div>
+
+<!-- ===================== THEMED EVENT-TYPE PICKER (fits fully within popup) ===================== -->
+<div class="sheet-backdrop" id="occasionBackdrop"></div>
+<div class="sheet occasion-picker-sheet" id="occasionPickerSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" id="closeOccasionSheet"><i class="fa-solid fa-xmark"></i></button>
+  <h3><i class="fa-solid fa-champagne-glasses"></i> <span data-i18n="eventType">Event Type</span></h3>
+  <div class="occasion-grid" id="occasionGrid" role="listbox" aria-label="Event type"></div>
+</div>
+
+<!-- ===================== THEMED DATE PICKER ===================== -->
+<div class="sheet-backdrop" id="dateBackdrop"></div>
+<div class="sheet date-picker-sheet" id="datePickerSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" id="closeDateSheet"><i class="fa-solid fa-xmark"></i></button>
+  <h3><i class="fa-solid fa-calendar-days"></i> <span data-i18n="chooseDate">Choose date</span></h3>
+  <div class="date-picker-header">
+    <button type="button" class="date-nav-btn" id="datePrevMonth" aria-label="Previous month"><i class="fa-solid fa-chevron-left"></i></button>
+    <strong id="datePickerMonthLabel"></strong>
+    <button type="button" class="date-nav-btn" id="dateNextMonth" aria-label="Next month"><i class="fa-solid fa-chevron-right"></i></button>
+  </div>
+  <div class="date-picker-weekdays" id="datePickerWeekdays"></div>
+  <div class="date-picker-grid" id="datePickerGrid"></div>
+</div>
+
+<!-- ===================== THEMED TIME PICKER ===================== -->
+<div class="sheet-backdrop" id="timeBackdrop"></div>
+<div class="sheet time-picker-sheet" id="timePickerSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" id="closeTimeSheet"><i class="fa-solid fa-xmark"></i></button>
+  <h3><i class="fa-solid fa-clock"></i> <span data-i18n="chooseTime">Choose time</span></h3>
+  <div class="time-picker-wheels">
+    <div class="time-wheel" id="timeWheelHour" role="listbox" aria-label="Hour"></div>
+    <div class="time-wheel-sep">:</div>
+    <div class="time-wheel" id="timeWheelMinute" role="listbox" aria-label="Minute"></div>
+    <div class="time-wheel time-wheel-ampm" id="timeWheelAmpm" role="listbox" aria-label="AM or PM"></div>
+  </div>
+  <button class="btn-primary" id="timePickerDoneBtn" data-i18n="confirm">Confirm</button>
 </div>
 
 <!-- Toast -->

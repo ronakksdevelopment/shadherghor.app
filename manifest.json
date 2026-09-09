@@ -2,7 +2,7 @@
   "name": "Swader Ghor - Order Food Online in Agartala",
   "short_name": "Swader Ghor",
   "description": "Order delicious momo, chowmein, biryani, burgers and more online from Swader Ghor, Agartala. Authentic street food delivered fresh.",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

@@ -67,6 +67,47 @@
   function getProduct(id) {
     return PRODUCTS.find((p) => p.id === id);
   }
+  /* Renders a real photo when `image` is set on a product/category,
+     otherwise falls back to the existing Font Awesome icon treatment.
+     `extraHtml` lets callers keep badges/overlays that sit on top of the
+     art (bestseller ribbon, veg dot, etc). */
+  const MEDIA_TILE_SELECTOR = ".product-img, .product-row-img, .product-sheet-img, .cat-circle, .cart-item-img";
+  function mediaHtml(entity, extraHtml) {
+    extraHtml = extraHtml || "";
+    if (entity && entity.image) {
+      return `<img class="tile-photo" src="${escapeHtml(entity.image)}" alt="" loading="lazy">${extraHtml}<i class="${entity.icon}"></i>`;
+    }
+    return `${extraHtml}<i class="${entity.icon}"></i>`;
+  }
+  /* Delegated load/error handling for every .tile-photo currently in the
+     DOM: adds .has-photo to the tile once the image is confirmed to have
+     loaded (hiding the icon underneath via CSS), or removes the broken
+     <img> on error so the icon fallback shows immediately. Runs on the
+     capture phase since 'load'/'error' don't bubble. */
+  document.addEventListener(
+    "load",
+    (e) => {
+      const img = e.target;
+      if (!(img instanceof HTMLImageElement) || !img.classList.contains("tile-photo")) return;
+      const tile = img.closest(MEDIA_TILE_SELECTOR);
+      if (tile) tile.classList.add("has-photo");
+    },
+    true
+  );
+  document.addEventListener(
+    "error",
+    (e) => {
+      const img = e.target;
+      if (!(img instanceof HTMLImageElement) || !img.classList.contains("tile-photo")) return;
+      const tile = img.closest(MEDIA_TILE_SELECTOR);
+      if (tile) tile.classList.remove("has-photo");
+      img.remove();
+    },
+    true
+  );
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
   function cartLineKey(productId, sizeIndex) {
     return productId + "::" + sizeIndex;
   }
@@ -171,7 +212,7 @@
     wrap.innerHTML = CATEGORIES.map(
       (c) => `
       <button class="cat-item" data-cat="${c.id}">
-        <div class="cat-circle"><i class="${c.icon}"></i></div>
+        <div class="cat-circle">${mediaHtml(c)}</div>
         <span>${c.name}</span>
       </button>`
     ).join("");
@@ -210,7 +251,10 @@
   function renderProductGrid() {
     const wrap = document.getElementById("productGrid");
     const bestsellers = PRODUCTS.filter((p) => p.badge === "Bestseller" || p.rating >= 4.7).slice(0, 6);
-    document.getElementById("menuCount").textContent = bestsellers.length + " items";
+    document.getElementById("menuCount").textContent = t(
+      bestsellers.length === 1 ? "itemCount" : "itemCountPlural",
+      { n: bestsellers.length }
+    );
     wrap.innerHTML = bestsellers.map(productCardHtml).join("");
     attachProductCardEvents(wrap);
   }
@@ -218,13 +262,13 @@
   function addControlHtml(p) {
     const qty = productCartQty(p.id);
     if (qty <= 0) {
-      return `<button class="add-btn" data-open="${p.id}">ADD</button>`;
+      return `<button class="add-btn" data-open="${p.id}">${t("addLabel")}</button>`;
     }
     return `
       <div class="qty-stepper qty-stepper-sm" data-stepper="${p.id}">
-        <button data-step="-1" aria-label="Remove one"><i class="fa-solid fa-minus"></i></button>
+        <button data-step="-1" aria-label="${t("decreaseQtyAria")}"><i class="fa-solid fa-minus"></i></button>
         <span>${qty}</span>
-        <button data-step="1" aria-label="Add one"><i class="fa-solid fa-plus"></i></button>
+        <button data-step="1" aria-label="${t("increaseQtyAria")}"><i class="fa-solid fa-plus"></i></button>
       </div>`;
   }
 
@@ -233,16 +277,14 @@
     return `
     <div class="product-card" data-id="${p.id}">
       <div class="product-img">
-        ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ""}
-        <div class="veg-dot"><span></span></div>
-        <i class="${p.icon}"></i>
+        ${mediaHtml(p, (p.badge ? `<span class="product-badge">${p.badge}</span>` : "") + `<div class="veg-dot"><span></span></div>`)}
       </div>
       <div class="product-info">
         <div class="product-name">${p.name}</div>
         <div class="product-desc">${p.desc}</div>
         <div class="product-rating"><i class="fa-solid fa-star"></i> ${p.rating}</div>
         <div class="product-bottom${qty > 0 ? " has-stepper" : ""}">
-          <div class="product-price">${formatMoney(p.basePrice)} <small>onwards</small></div>
+          <div class="product-price">${formatMoney(p.basePrice)} <small>${t("onwards")}</small></div>
           ${addControlHtml(p)}
         </div>
       </div>
@@ -252,14 +294,14 @@
   function productRowHtml(p) {
     return `
     <div class="product-row" data-id="${p.id}">
-      <div class="product-row-img"><i class="${p.icon}"></i>${p.badge ? `<span class="product-badge" style="position:absolute;top:6px;left:6px;">${p.badge}</span>` : ""}</div>
+      <div class="product-row-img">${mediaHtml(p, p.badge ? `<span class="product-badge" style="position:absolute;top:6px;left:6px;">${p.badge}</span>` : "")}</div>
       <div class="product-row-body">
         <div class="product-row-top">
           <div class="product-row-name">${p.name}</div>
         </div>
         <div class="product-row-desc">${p.desc}</div>
         <div class="product-row-bottom">
-          <div class="product-price">${formatMoney(p.basePrice)} <small>onwards</small></div>
+          <div class="product-price">${formatMoney(p.basePrice)} <small>${t("onwards")}</small></div>
           ${addControlHtml(p)}
         </div>
       </div>
@@ -325,11 +367,11 @@
   function renderMenuScreen(catId) {
     activeCategory = catId;
     document.getElementById("menuScreenTitle").textContent =
-      catId === "all" ? "All Items" : CATEGORIES.find((c) => c.id === catId)?.name || "Menu";
+      catId === "all" ? t("allItems") : CATEGORIES.find((c) => c.id === catId)?.name || t("allItems");
 
     const chipRow = document.getElementById("chipRow");
     chipRow.innerHTML =
-      `<button class="chip ${catId === "all" ? "active" : ""}" data-chip="all">All</button>` +
+      `<button class="chip ${catId === "all" ? "active" : ""}" data-chip="all">${t("all")}</button>` +
       CATEGORIES.map((c) => `<button class="chip ${catId === c.id ? "active" : ""}" data-chip="${c.id}">${c.name}</button>`).join("");
     chipRow.querySelectorAll(".chip").forEach((chip) => {
       chip.addEventListener("click", () => renderMenuScreen(chip.dataset.chip));
@@ -407,13 +449,13 @@
 
     const body = document.getElementById("productSheetBody");
     body.innerHTML = `
-      <div class="product-sheet-img"><i class="${p.icon}"></i></div>
+      <div class="product-sheet-img">${mediaHtml(p)}</div>
       <h2>${p.name}</h2>
       <div class="product-rating" style="margin-bottom:10px;"><i class="fa-solid fa-star"></i> ${p.rating} rating</div>
       <p class="product-sheet-desc">${p.desc}</p>
 
       <div class="psheet-block">
-        <span class="field-label" id="sizeOptionsLabel">Select Size / Portion</span>
+        <span class="field-label" id="sizeOptionsLabel">${t("selectSize")}</span>
         <div class="option-row" id="sizeOptions" role="group" aria-labelledby="sizeOptionsLabel">
           ${p.sizes
             .map(
@@ -427,20 +469,20 @@
       </div>
 
       <div class="psheet-block">
-        <span class="field-label" id="qtyLabel">Quantity</span>
+        <span class="field-label" id="qtyLabel">${t("quantity")}</span>
         <div class="qty-stepper" role="group" aria-labelledby="qtyLabel">
-          <button type="button" id="qtyMinus" aria-label="Decrease quantity"><i class="fa-solid fa-minus"></i></button>
+          <button type="button" id="qtyMinus" aria-label="${t("decreaseQtyAria")}"><i class="fa-solid fa-minus"></i></button>
           <span id="qtyValue" aria-live="polite">${selectedQty}</span>
-          <button type="button" id="qtyPlus" aria-label="Increase quantity"><i class="fa-solid fa-plus"></i></button>
+          <button type="button" id="qtyPlus" aria-label="${t("increaseQtyAria")}"><i class="fa-solid fa-plus"></i></button>
         </div>
       </div>
 
       <div class="psheet-footer">
         <div class="psheet-price">
           <strong id="sheetTotalPrice">${formatMoney(total)}</strong>
-          <span>Total for ${selectedQty} item${selectedQty > 1 ? "s" : ""}</span>
+          <span>${t(selectedQty > 1 ? "totalForItemsPlural" : "totalForItems", { n: selectedQty })}</span>
         </div>
-        <button class="btn-primary" id="addToCartBtn"><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button>
+        <button class="btn-primary" id="addToCartBtn"><i class="fa-solid fa-bag-shopping"></i> ${t("addToCart")}</button>
       </div>
     `;
 
@@ -473,7 +515,7 @@
     saveCart();
     floatCartDismissed = false;
     updateCartBadges();
-    showToast(p.name + " added to cart");
+    showToast(t("toastAddedToCart", { name: p.name }));
     closeProductSheet();
     renderProductGrid();
     if (document.getElementById("screen-menu").classList.contains("active")) renderMenuScreen(activeCategory);
@@ -546,7 +588,7 @@
         const lineTotal = size.price * line.qty;
         return `
         <div class="cart-item" data-key="${cartLineKey(line.productId, line.sizeIndex)}">
-          <div class="cart-item-img"><i class="${p.icon}"></i></div>
+          <div class="cart-item-img">${mediaHtml(p)}</div>
           <div class="cart-item-body">
             <div class="cart-item-name">${p.name}</div>
             <div class="cart-item-meta">${size.label}</div>
@@ -587,7 +629,7 @@
         saveCart();
         renderCartScreen();
         updateCartBadges();
-        showToast("Item removed");
+        showToast(t("toastItemRemoved"));
       });
     });
 
@@ -598,10 +640,11 @@
   function renderBill() {
     const itemTotal = cartItemTotal();
     const freeDelivery = itemTotal >= FREE_DELIVERY_ABOVE;
-    const deliveryFee = freeDelivery ? 0 : DELIVERY_FEE;
+    const deliveryCalc = computeDeliveryFee();
+    const deliveryFee = freeDelivery ? 0 : deliveryCalc.fee;
 
     document.getElementById("billItemTotal").textContent = formatMoney(itemTotal);
-    document.getElementById("billDelivery").textContent = freeDelivery ? "FREE" : formatMoney(deliveryFee);
+    document.getElementById("billDelivery").textContent = freeDelivery ? t("free") : formatMoney(deliveryFee);
 
     const tipRow = document.getElementById("billTipRow");
     if (selectedTip > 0) {
@@ -614,7 +657,7 @@
     const discountRow = document.getElementById("billDiscountRow");
     if (freeDelivery) {
       discountRow.style.display = "flex";
-      document.getElementById("billDiscount").textContent = "-" + formatMoney(DELIVERY_FEE);
+      document.getElementById("billDiscount").textContent = "-" + formatMoney(deliveryCalc.fee);
     } else {
       discountRow.style.display = "none";
     }
@@ -625,9 +668,10 @@
     const note = document.getElementById("freeDeliveryNote");
     if (!freeDelivery) {
       const remaining = FREE_DELIVERY_ABOVE - itemTotal;
-      note.textContent = `Add ${formatMoney(remaining)} more to get FREE delivery`;
+      note.textContent = t("addMoreForFreeDelivery", { amount: formatMoney(remaining) });
     } else {
-      note.textContent = "You unlocked FREE delivery on this order";
+      note.textContent = t("unlockedFreeDelivery");
+
     }
   }
 
@@ -635,15 +679,18 @@
     if (cart.length === 0) return;
     const existing = document.getElementById("cartCheckoutBar");
     if (existing) existing.remove();
+    const itemTotal = cartItemTotal();
+    const freeDelivery = itemTotal >= FREE_DELIVERY_ABOVE;
+    const deliveryFee = freeDelivery ? 0 : computeDeliveryFee().fee;
     const bar = document.createElement("div");
     bar.className = "cart-checkout-bar";
     bar.id = "cartCheckoutBar";
     bar.innerHTML = `
       <div class="checkout-total">
-        <strong id="ccbTotal">${formatMoney(cartItemTotal() + (cartItemTotal() >= FREE_DELIVERY_ABOVE ? 0 : DELIVERY_FEE) + selectedTip)}</strong>
-        <span>TOTAL</span>
+        <strong id="ccbTotal">${formatMoney(itemTotal + deliveryFee + selectedTip)}</strong>
+        <span>${t("totalLabel")}</span>
       </div>
-      <button class="btn-checkout" id="proceedToSummary">Proceed to Checkout <i class="fa-solid fa-arrow-right"></i></button>
+      <button class="btn-checkout" id="proceedToSummary">${t("proceedCheckout")} <i class="fa-solid fa-arrow-right"></i></button>
     `;
     const appEl = document.getElementById("app") || document.body;
     appEl.appendChild(bar);
@@ -687,26 +734,36 @@
   document.getElementById("clearCartBtn").addEventListener("click", async () => {
     if (cart.length === 0) return;
     const confirmed = await showConfirm({
-      title: "Clear your cart?",
-      message: "This will remove all items from your cart. This action cannot be undone.",
-      okLabel: "Clear Cart",
+      title: t("clearCartTitle"),
+      message: t("clearCartMessage"),
+      okLabel: t("clearCartConfirm"),
     });
     if (confirmed) {
       cart = [];
       saveCart();
       updateCartBadges();
       renderCartScreen();
-      showToast("Cart cleared");
+      showToast(t("toastCartCleared"));
     }
   });
+
+  /* Maps the internal (English) payment-method identifier used in
+     data-pay attributes to its translation key, so the value shown to
+     the customer (checkout note, WhatsApp message) is always in their
+     selected language rather than the raw internal string. */
+  function payMethodLabel(method) {
+    if (method === "Cash on Delivery") return t("cashOnDelivery");
+    if (method === "UPI / Online (pay on delivery link)") return t("upiPayment");
+    return method;
+  }
 
   /* ---------------- SUMMARY SCREEN ---------------- */
   function renderSummaryScreen() {
     const itemTotal = cartItemTotal();
     const freeDelivery = itemTotal >= FREE_DELIVERY_ABOVE;
-    const deliveryFee = freeDelivery ? 0 : DELIVERY_FEE;
-    const codFee = codDistanceFee();
-    const grandTotal = itemTotal + deliveryFee + codFee + selectedTip;
+    const deliveryCalc = computeDeliveryFee();
+    const deliveryFee = freeDelivery ? 0 : deliveryCalc.fee;
+    const grandTotal = itemTotal + deliveryFee + selectedTip;
 
     const itemsWrap = document.getElementById("summaryItems");
     itemsWrap.innerHTML = cart
@@ -722,15 +779,21 @@
       .join("");
 
     document.getElementById("sumItemTotal").textContent = formatMoney(itemTotal);
-    document.getElementById("sumDelivery").textContent = freeDelivery ? "FREE" : formatMoney(deliveryFee);
+    document.getElementById("sumDelivery").textContent = freeDelivery ? t("free") : formatMoney(deliveryFee);
 
-    const codRow = document.getElementById("sumCodRow");
-    if (codFee > 0) {
-      codRow.style.display = "flex";
-      const km = codDistanceKmRounded();
-      document.getElementById("sumCodFee").textContent = formatMoney(codFee) + ` (${km.toFixed(1)} km)`;
+    /* Distance note: shown whenever we have a real GPS fix, for every
+       payment method (not just COD), since delivery pricing is always
+       distance-based now. When coordinates aren't pinned yet, nudge the
+       customer to pin their location instead of silently guessing. */
+    const distanceRow = document.getElementById("sumDistanceRow");
+    if (!freeDelivery && deliveryCalc.km !== null) {
+      distanceRow.style.display = "flex";
+      document.getElementById("sumDistanceValue").textContent = `${deliveryCalc.km.toFixed(1)} km`;
+    } else if (!freeDelivery && deliveryCalc.provisional) {
+      distanceRow.style.display = "flex";
+      document.getElementById("sumDistanceValue").textContent = t("pinLocationForAccuratePricing");
     } else {
-      codRow.style.display = "none";
+      distanceRow.style.display = "none";
     }
 
     const tipRow = document.getElementById("sumTipRow");
@@ -741,14 +804,20 @@
       tipRow.style.display = "none";
     }
     document.getElementById("sumGrandTotal").textContent = formatMoney(grandTotal);
-    document.getElementById("sumPayMethod").textContent =
-      "Payment method: " + selectedPayMethod +
-      (codFee > 0 ? ` (includes distance-based COD charge)` : "");
+    document.getElementById("sumPayMethod").textContent = t("paymentMethodNote", { method: payMethodLabel(selectedPayMethod) });
 
     /* Intentionally no default/auto-fill of the address field here. The
        customer must either type their address or tap "Use my current
        location" — we never silently pre-fill it with the general saved
        delivery area, since that could be stale or imprecise. */
+
+    /* Coordinates field always reflects current state on (re)render, so
+       switching languages or re-opening checkout doesn't lose the pin. */
+    const coordsInput = document.getElementById("custCoords");
+    if (coordsInput && document.activeElement !== coordsInput) {
+      coordsInput.value = deliveryCoords ? `${deliveryCoords.lat.toFixed(6)}, ${deliveryCoords.lng.toFixed(6)}` : "";
+    }
+    updateCoordsMapLink();
   }
 
   const custPhoneInput = document.getElementById("custPhone");
@@ -792,7 +861,7 @@
     const note = document.getElementById("orderNote") ? document.getElementById("orderNote").value.trim() : "";
 
     if (!name || !phone || !address) {
-      showToast("Please fill in name, phone and address");
+      showToast(t("toastFillDetails"));
       if (!name) document.getElementById("custName").focus();
       else if (!phone) document.getElementById("custPhone").focus();
       else document.getElementById("custAddress").focus();
@@ -800,16 +869,39 @@
     }
     const phoneDigits = phone.replace(/\D/g, "");
     if (phoneDigits.length !== 10) {
-      showToast("Please enter a valid 10-digit phone number");
+      showToast(t("toastInvalidPhone"));
       document.getElementById("custPhone").focus();
       return;
+    }
+
+    /* Sync deliveryCoords from whatever is currently typed in the
+       coordinates field — the customer may have hand-edited an
+       auto-filled pin, or typed one in manually without ever tapping
+       the locate button. Delivery pricing must always reflect this
+       field's current value, not a stale auto-detected one. */
+    const coordsField = document.getElementById("custCoords");
+    if (coordsField) {
+      const raw = coordsField.value.trim();
+      if (raw) {
+        const parsed = parseCoordsInput(raw);
+        if (!parsed) {
+          showToast(t("toastCoordsInvalid"));
+          coordsField.focus();
+          return;
+        }
+        deliveryCoords = parsed;
+        localStorage.setItem("sg_coords", JSON.stringify(deliveryCoords));
+      } else {
+        deliveryCoords = null;
+        localStorage.removeItem("sg_coords");
+      }
     }
 
     /* Safety net: drop any cart line whose product/size vanished since the
        summary screen was rendered, so we never build a broken message. */
     cart = sanitizeCart(cart);
     if (cart.length === 0) {
-      showToast("Your cart is empty. Please add items again.");
+      showToast(t("toastCartEmptyRetry"));
       renderCartScreen();
       showScreen("screen-cart");
       return;
@@ -817,39 +909,43 @@
 
     const itemTotal = cartItemTotal();
     const freeDelivery = itemTotal >= FREE_DELIVERY_ABOVE;
-    const deliveryFee = freeDelivery ? 0 : DELIVERY_FEE;
-    const codFee = codDistanceFee();
-    const grandTotal = itemTotal + deliveryFee + codFee + selectedTip;
+    const deliveryCalc = computeDeliveryFee();
+    const deliveryFee = freeDelivery ? 0 : deliveryCalc.fee;
+    const grandTotal = itemTotal + deliveryFee + selectedTip;
 
     let msg = `Hello Swader Ghor! I would like to place an order.\n\n`;
-    msg += `*Order Details:*\n`;
+    msg += `*ORDER DETAILS*\n`;
     cart.forEach((line) => {
       const p = getProduct(line.productId);
       if (!p || !p.sizes[line.sizeIndex]) return;
       const size = p.sizes[line.sizeIndex];
-      msg += `- ${p.name} (${size.label}) x${line.qty} = ${formatMoney(size.price * line.qty)}\n`;
+      msg += `• ${p.name} (${size.label}) x${line.qty} — ${formatMoney(size.price * line.qty)}\n`;
     });
-    msg += `\n*Item Total:* ${formatMoney(itemTotal)}`;
-    msg += `\n*Delivery Fee:* ${freeDelivery ? "FREE" : formatMoney(deliveryFee)}`;
-    if (codFee > 0) {
-      msg += `\n*COD Distance Charge:* ${formatMoney(codFee)} (~${codDistanceKmRounded().toFixed(1)} km at ₹${COD_RATE_PER_KM}/km)`;
+    msg += `\n*BILL SUMMARY*\n`;
+    msg += `Item Total: ${formatMoney(itemTotal)}\n`;
+    if (!freeDelivery && deliveryCalc.km !== null) {
+      msg += `Delivery Fee: ${formatMoney(deliveryFee)} (~${deliveryCalc.km.toFixed(1)} km)\n`;
+    } else {
+      msg += `Delivery Fee: ${freeDelivery ? "FREE" : formatMoney(deliveryFee)}\n`;
     }
-    if (selectedTip > 0) msg += `\n*Tip for Chefs:* ${formatMoney(selectedTip)}`;
-    msg += `\n*Total Amount:* ${formatMoney(grandTotal)}`;
-    msg += `\n*Payment Method:* ${selectedPayMethod}`;
+    if (selectedTip > 0) msg += `Tip for Chefs: ${formatMoney(selectedTip)}\n`;
+    msg += `*Total Amount: ${formatMoney(grandTotal)}*\n`;
+    msg += `Payment Method: ${payMethodLabel(selectedPayMethod)}`;
 
     if (note) msg += `\n\n*Note for chef:* ${note}`;
 
-    msg += `\n\n*Customer Details:*`;
-    msg += `\nName: ${name}`;
-    msg += `\nPhone: ${phoneDigits}`;
-    msg += `\nAddress: ${address}`;
+    msg += `\n\n*CUSTOMER DETAILS*\n`;
+    msg += `Name: ${name}\n`;
+    msg += `Phone: ${phoneDigits}\n`;
+    msg += `Address: ${address}`;
     if (city) msg += `\nCity/Pincode: ${city}`;
     if (dateTime) msg += `\nPreferred Delivery: ${dateTime}`;
     if (deliveryCoords) {
-      msg += `\n*Exact Location (GPS):* https://maps.google.com/?q=${deliveryCoords.lat},${deliveryCoords.lng}`;
+      msg += `\n\n*DELIVERY LOCATION*\n`;
+      msg += `Coordinates: ${deliveryCoords.lat.toFixed(6)}, ${deliveryCoords.lng.toFixed(6)}\n`;
+      msg += `Google Maps: https://maps.google.com/?q=${deliveryCoords.lat},${deliveryCoords.lng}`;
       if (addressEditedAfterLocate) {
-        msg += ` (note: address text edited after pinning)`;
+        msg += `\n(Note: address text was edited after pinning)`;
       }
     }
 
@@ -881,18 +977,20 @@
   document.getElementById("saveLocationBtn").addEventListener("click", () => {
     const val = document.getElementById("locationInput").value.trim();
     if (!val) {
-      showToast("Please enter your location");
+      showToast(t("toastEnterLocation"));
       return;
     }
     deliveryLocation = val;
     localStorage.setItem("sg_location", val);
     document.getElementById("currentLocation").innerHTML = val.length > 22 ? val.slice(0, 22) + "... <i class='fa-solid fa-chevron-down'></i>" : val + ' <i class="fa-solid fa-chevron-down"></i>';
     hideLocationSheet();
-    showToast("Location saved");
+    showToast(t("toastLocationSaved"));
   });
 
-  /* ---------------- AUTO-DETECT LOCATION ---------------- */
-  const COD_RATE_PER_KM = 20;
+  /* ---------------- DELIVERY FEE (GPS-distance-based only) ---------------- */
+  const PER_KM_RATE = typeof PER_KM_DELIVERY_RATE !== "undefined" ? PER_KM_DELIVERY_RATE : 12;
+  const BASE_KM = typeof BASE_DELIVERY_KM !== "undefined" ? BASE_DELIVERY_KM : 3;
+  const BASE_FEE = typeof BASE_DELIVERY_FEE !== "undefined" ? BASE_DELIVERY_FEE : 39;
 
   function distanceKm(lat1, lng1, lat2, lng2) {
     const R = 6371;
@@ -905,16 +1003,51 @@
     return R * c;
   }
 
-  function codDistanceFee() {
-    if (selectedPayMethod !== "Cash on Delivery") return 0;
-    if (!deliveryCoords) return 0;
-    const km = distanceKm(STORE_LAT, STORE_LNG, deliveryCoords.lat, deliveryCoords.lng);
-    return Math.round(km * COD_RATE_PER_KM);
+  /* Straight-line distance in km from the store to the customer's pinned
+     delivery coordinates. Returns null if no coordinates are set yet —
+     callers must not fall back to any area/place-name based estimate. */
+  function deliveryDistanceKm() {
+    if (!deliveryCoords) return null;
+    return distanceKm(STORE_LAT, STORE_LNG, deliveryCoords.lat, deliveryCoords.lng);
   }
 
-  function codDistanceKmRounded() {
-    if (!deliveryCoords) return 0;
-    return distanceKm(STORE_LAT, STORE_LNG, deliveryCoords.lat, deliveryCoords.lng);
+  /* Single source of truth for delivery pricing, used for every payment
+     method. Fee is derived only from GPS coordinates: a flat base fee
+     covers the first BASE_KM, and every additional km (rounded up) is
+     charged at PER_KM_RATE. If coordinates aren't pinned yet, the base
+     fee is shown provisionally and callers should prompt the customer
+     to pin their location for an accurate charge. */
+  function computeDeliveryFee() {
+    const km = deliveryDistanceKm();
+    if (km === null) return { fee: BASE_FEE, km: null, provisional: true };
+    if (km <= BASE_KM) return { fee: BASE_FEE, km, provisional: false };
+    const extraKm = Math.ceil(km - BASE_KM);
+    return { fee: BASE_FEE + extraKm * PER_KM_RATE, km, provisional: false };
+  }
+
+  /* Parses "lat, lng" (or "lat lng") text into {lat, lng}, or null if the
+     text isn't a valid pair of coordinates. Accepts the customer's own
+     typed edits as well as auto-filled values, since both go through the
+     same field. */
+  function parseCoordsInput(raw) {
+    const m = raw.match(/^\s*(-?\d+(?:\.\d+)?)\s*[,\s]\s*(-?\d+(?:\.\d+)?)\s*$/);
+    if (!m) return null;
+    const lat = parseFloat(m[1]);
+    const lng = parseFloat(m[2]);
+    if (Number.isNaN(lat) || Number.isNaN(lng)) return null;
+    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
+    return { lat, lng };
+  }
+
+  function updateCoordsMapLink() {
+    const link = document.getElementById("coordsMapLink");
+    if (!link) return;
+    if (deliveryCoords) {
+      link.href = `https://maps.google.com/?q=${deliveryCoords.lat},${deliveryCoords.lng}`;
+      link.classList.remove("hidden");
+    } else {
+      link.classList.add("hidden");
+    }
   }
 
   async function reverseGeocode(lat, lng) {
@@ -951,16 +1084,19 @@
     if (input) input.value = label;
     const addrField = document.getElementById("custAddress");
     if (addrField && !addrField.value.trim()) addrField.value = label;
+    const coordsField = document.getElementById("custCoords");
+    if (coordsField) coordsField.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    updateCoordsMapLink();
   }
 
   function runAutoLocate(btn, labelEl, onDone) {
     if (!("geolocation" in navigator)) {
-      showToast("Location services aren't supported on this device");
+      showToast(t("toastNoGeolocation"));
       return;
     }
     btn.classList.add("locating");
     btn.classList.remove("success");
-    if (labelEl) labelEl.textContent = "Detecting your location...";
+    if (labelEl) labelEl.textContent = t("detectingLocation");
 
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
@@ -969,21 +1105,21 @@
         applyDetectedLocation(label, latitude, longitude);
         btn.classList.remove("locating");
         btn.classList.add("success");
-        if (labelEl) labelEl.textContent = "Location detected!";
-        showToast("Location updated: " + label);
+        if (labelEl) labelEl.textContent = t("locationDetected");
+        showToast(t("toastLocationUpdated", { label: label }));
         if (onDone) onDone(label);
         setTimeout(() => {
           btn.classList.remove("success");
-          if (labelEl) labelEl.textContent = btn.dataset.defaultLabel || "Auto-detect my location";
+          if (labelEl) labelEl.textContent = t("autoDetectLocation");
         }, 2200);
       },
       (err) => {
         btn.classList.remove("locating");
-        if (labelEl) labelEl.textContent = btn.dataset.defaultLabel || "Auto-detect my location";
+        if (labelEl) labelEl.textContent = t("autoDetectLocation");
         if (err.code === err.PERMISSION_DENIED) {
-          showToast("Please allow location access to auto-detect");
+          showToast(t("toastLocationDenied"));
         } else {
-          showToast("Couldn't detect location, try entering it manually");
+          showToast(t("toastLocationFailed"));
         }
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
@@ -993,24 +1129,54 @@
   const autoLocateBtn = document.getElementById("autoLocateBtn");
   const autoLocateLabel = document.getElementById("autoLocateLabel");
   if (autoLocateBtn) {
-    autoLocateBtn.dataset.defaultLabel = autoLocateLabel ? autoLocateLabel.textContent : "";
     autoLocateBtn.addEventListener("click", () => runAutoLocate(autoLocateBtn, autoLocateLabel));
   }
 
   const useMyLocationBtn = document.getElementById("useMyLocationBtn");
   if (useMyLocationBtn) {
-    useMyLocationBtn.dataset.defaultLabel = useMyLocationBtn.innerHTML;
     useMyLocationBtn.addEventListener("click", () => {
       runAutoLocate(useMyLocationBtn, null, (label) => {
         document.getElementById("custAddress").value = label;
         lastAutoFilledAddress = label;
         addressEditedAfterLocate = false;
-        useMyLocationBtn.innerHTML = '<i class="fa-solid fa-check"></i> Location applied';
+        useMyLocationBtn.innerHTML = `<i class="fa-solid fa-check"></i> ${t("locationApplied")}`;
         renderSummaryScreen();
         setTimeout(() => {
-          useMyLocationBtn.innerHTML = useMyLocationBtn.dataset.defaultLabel;
+          useMyLocationBtn.innerHTML = `<i class="fa-solid fa-location-crosshairs"></i> <span data-i18n="useMyLocation">${t("useMyLocation")}</span>`;
         }, 2200);
       });
+    });
+  }
+
+  /* Delivery Coordinates field: locate button fills it from GPS, and the
+     customer can freely type/edit it afterward. Editing is picked up at
+     send-time (see sendWhatsappBtn handler), but we also sync eagerly on
+     blur so the bill preview updates without requiring a submit. */
+  const detectCoordsBtn = document.getElementById("detectCoordsBtn");
+  const custCoordsInput = document.getElementById("custCoords");
+  if (detectCoordsBtn) {
+    detectCoordsBtn.addEventListener("click", () => {
+      runAutoLocate(detectCoordsBtn, null, () => {
+        if (custCoordsInput && deliveryCoords) {
+          custCoordsInput.value = `${deliveryCoords.lat.toFixed(6)}, ${deliveryCoords.lng.toFixed(6)}`;
+        }
+        renderSummaryScreen();
+      });
+    });
+  }
+  if (custCoordsInput) {
+    custCoordsInput.addEventListener("blur", () => {
+      const raw = custCoordsInput.value.trim();
+      if (!raw) return;
+      const parsed = parseCoordsInput(raw);
+      if (!parsed) {
+        showToast(t("toastCoordsInvalid"));
+        return;
+      }
+      deliveryCoords = parsed;
+      localStorage.setItem("sg_coords", JSON.stringify(deliveryCoords));
+      showToast(t("toastCoordsUpdated"));
+      renderSummaryScreen();
     });
   }
 
@@ -1046,13 +1212,13 @@
 
   async function triggerInstall() {
     if (!deferredPrompt) {
-      showToast("App already installed or not supported on this browser");
+      showToast(t("toastAppAlreadyInstalled"));
       return;
     }
     deferredPrompt.prompt();
     const choice = await deferredPrompt.userChoice;
     if (choice.outcome === "accepted") {
-      showToast("Installing Swader Ghor...");
+      showToast(t("toastInstalling"));
     }
     deferredPrompt = null;
     installBanner.classList.add("hidden");
@@ -1064,9 +1230,25 @@
   /* ---------------- CUSTOM ENQUIRY SHEET ---------------- */
   const customBackdrop = document.getElementById("customBackdrop");
   const customSheet = document.getElementById("customSheet");
-  let customOccasion = "Birthday Party";
+
+  /* Event type options for the themed occasion picker. Icons are
+     FontAwesome classes; labels are resolved through t() so the grid
+     re-renders correctly on language change. */
+  const OCCASION_OPTIONS = [
+    { key: "birthdayParty", icon: "fa-solid fa-cake-candles" },
+    { key: "corporateEvent", icon: "fa-solid fa-briefcase" },
+    { key: "wedding", icon: "fa-solid fa-rings-wedding" },
+    { key: "houseParty", icon: "fa-solid fa-house-user" },
+    { key: "otherOccasion", icon: "fa-solid fa-ellipsis" },
+  ];
+  let customOccasionKey = "birthdayParty";
+  let customDateValue = null; // { y, m, d } or null
+  let customTimeValue = null; // { hour24, minute } or null
+  let datePickerViewYear, datePickerViewMonth;
 
   document.getElementById("moreCustomBtn").addEventListener("click", () => {
+    if (occasionSelectValue) occasionSelectValue.textContent = t(customOccasionKey);
+    updateCustomDateTimeLabels();
     customBackdrop.classList.add("open");
     customSheet.classList.add("open");
   });
@@ -1077,30 +1259,253 @@
   customBackdrop.addEventListener("click", hideCustomSheet);
   document.getElementById("closeCustomSheet").addEventListener("click", hideCustomSheet);
 
-  document.getElementById("customOccasionOptions").addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-occasion]");
-    if (!btn) return;
-    customOccasion = btn.dataset.occasion;
-    document.querySelectorAll("#customOccasionOptions .option-chip").forEach((c) => c.classList.remove("active"));
-    btn.classList.add("active");
+  /* ---- Themed Event Type picker (item 8: fits fully in popup, no scroll) ---- */
+  const occasionBackdrop = document.getElementById("occasionBackdrop");
+  const occasionPickerSheet = document.getElementById("occasionPickerSheet");
+  const occasionSelectBtn = document.getElementById("customOccasionSelect");
+  const occasionSelectValue = document.getElementById("customOccasionSelectValue");
+
+  function renderOccasionGrid() {
+    const grid = document.getElementById("occasionGrid");
+    if (!grid) return;
+    grid.innerHTML = OCCASION_OPTIONS.map(
+      (o) => `
+      <button type="button" class="occasion-tile${o.key === customOccasionKey ? " active" : ""}" data-occasion="${o.key}" role="option" aria-selected="${o.key === customOccasionKey}">
+        <i class="${o.icon}"></i>
+        <span>${t(o.key)}</span>
+      </button>`
+    ).join("");
+    grid.querySelectorAll("[data-occasion]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        customOccasionKey = btn.dataset.occasion;
+        if (occasionSelectValue) occasionSelectValue.textContent = t(customOccasionKey);
+        hideOccasionSheet();
+      });
+    });
+  }
+  function showOccasionSheet() {
+    renderOccasionGrid();
+    occasionBackdrop.classList.add("open");
+    occasionPickerSheet.classList.add("open");
+  }
+  function hideOccasionSheet() {
+    occasionBackdrop.classList.remove("open");
+    occasionPickerSheet.classList.remove("open");
+  }
+  if (occasionSelectBtn) occasionSelectBtn.addEventListener("click", showOccasionSheet);
+  occasionBackdrop.addEventListener("click", hideOccasionSheet);
+  document.getElementById("closeOccasionSheet").addEventListener("click", hideOccasionSheet);
+
+  /* ---- Themed Date picker (item 7: replaces native datetime-local) ---- */
+  const dateBackdrop = document.getElementById("dateBackdrop");
+  const datePickerSheet = document.getElementById("datePickerSheet");
+  const customDateBtn = document.getElementById("customDateBtn");
+  const customDateBtnLabel = document.getElementById("customDateBtnLabel");
+
+  function renderDatePickerGrid() {
+    const weekdaysEl = document.getElementById("datePickerWeekdays");
+    const gridEl = document.getElementById("datePickerGrid");
+    const monthLabelEl = document.getElementById("datePickerMonthLabel");
+    if (!weekdaysEl || !gridEl || !monthLabelEl) return;
+
+    const weekdayNames = ["S", "M", "T", "W", "T", "F", "S"];
+    weekdaysEl.innerHTML = weekdayNames.map((w) => `<span>${w}</span>`).join("");
+
+    const first = new Date(datePickerViewYear, datePickerViewMonth, 1);
+    monthLabelEl.textContent = first.toLocaleString(
+      currentLang === "en" ? "en-IN" : currentLang,
+      { month: "long", year: "numeric" }
+    );
+
+    const daysInMonth = new Date(datePickerViewYear, datePickerViewMonth + 1, 0).getDate();
+    const startDow = first.getDay();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let cells = "";
+    for (let i = 0; i < startDow; i++) cells += `<span class="date-cell empty"></span>`;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const cellDate = new Date(datePickerViewYear, datePickerViewMonth, d);
+      const isPast = cellDate < today;
+      const isToday = cellDate.getTime() === today.getTime();
+      const isActive =
+        customDateValue &&
+        customDateValue.y === datePickerViewYear &&
+        customDateValue.m === datePickerViewMonth &&
+        customDateValue.d === d;
+      cells += `<button type="button" class="date-cell${isPast ? " disabled" : ""}${isToday ? " today" : ""}${isActive ? " active" : ""}" data-day="${d}">${d}</button>`;
+    }
+    gridEl.innerHTML = cells;
+    gridEl.querySelectorAll("[data-day]").forEach((cell) => {
+      cell.addEventListener("click", () => {
+        customDateValue = { y: datePickerViewYear, m: datePickerViewMonth, d: parseInt(cell.dataset.day, 10) };
+        updateCustomDateTimeLabels();
+        hideDateSheet();
+      });
+    });
+  }
+  function showDateSheet() {
+    const base = customDateValue
+      ? new Date(customDateValue.y, customDateValue.m, customDateValue.d)
+      : new Date();
+    datePickerViewYear = base.getFullYear();
+    datePickerViewMonth = base.getMonth();
+    renderDatePickerGrid();
+    dateBackdrop.classList.add("open");
+    datePickerSheet.classList.add("open");
+  }
+  function hideDateSheet() {
+    dateBackdrop.classList.remove("open");
+    datePickerSheet.classList.remove("open");
+  }
+  if (customDateBtn) customDateBtn.addEventListener("click", showDateSheet);
+  dateBackdrop.addEventListener("click", hideDateSheet);
+  document.getElementById("closeDateSheet").addEventListener("click", hideDateSheet);
+  document.getElementById("datePrevMonth").addEventListener("click", () => {
+    datePickerViewMonth--;
+    if (datePickerViewMonth < 0) {
+      datePickerViewMonth = 11;
+      datePickerViewYear--;
+    }
+    renderDatePickerGrid();
   });
+  document.getElementById("dateNextMonth").addEventListener("click", () => {
+    datePickerViewMonth++;
+    if (datePickerViewMonth > 11) {
+      datePickerViewMonth = 0;
+      datePickerViewYear++;
+    }
+    renderDatePickerGrid();
+  });
+
+  /* ---- Themed Time picker (item 7: scrolling wheels) ---- */
+  const timeBackdrop = document.getElementById("timeBackdrop");
+  const timePickerSheet = document.getElementById("timePickerSheet");
+  const customTimeBtn = document.getElementById("customTimeBtn");
+  const customTimeBtnLabel = document.getElementById("customTimeBtnLabel");
+  let pendingTime = { hour12: 12, minute: 0, ampm: "PM" };
+
+  function buildWheel(wheelEl, items, activeIndex, onSelect) {
+    wheelEl.innerHTML =
+      `<div class="time-wheel-pad"></div>` +
+      items.map((label, i) => `<div class="time-wheel-item${i === activeIndex ? " active" : ""}" data-index="${i}">${label}</div>`).join("") +
+      `<div class="time-wheel-pad"></div>`;
+    const itemEls = wheelEl.querySelectorAll(".time-wheel-item");
+    const scrollToIndex = (i, smooth) => {
+      const el = itemEls[i];
+      if (!el) return;
+      const top = el.offsetTop - wheelEl.clientHeight / 2 + el.clientHeight / 2;
+      if (typeof wheelEl.scrollTo === "function") {
+        wheelEl.scrollTo({ top, behavior: smooth ? "smooth" : "instant" });
+      } else {
+        wheelEl.scrollTop = top;
+      }
+    };
+    scrollToIndex(activeIndex, false);
+    itemEls.forEach((el, i) => {
+      el.addEventListener("click", () => {
+        scrollToIndex(i, true);
+        onSelect(i);
+      });
+    });
+    let scrollTimer = null;
+    wheelEl.addEventListener("scroll", () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        const center = wheelEl.scrollTop + wheelEl.clientHeight / 2;
+        let closest = 0;
+        let closestDist = Infinity;
+        itemEls.forEach((el, i) => {
+          const dist = Math.abs(el.offsetTop + el.clientHeight / 2 - center);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closest = i;
+          }
+        });
+        itemEls.forEach((el, i) => el.classList.toggle("active", i === closest));
+        onSelect(closest);
+      }, 120);
+    });
+  }
+
+  function renderTimePickers() {
+    const hourWheel = document.getElementById("timeWheelHour");
+    const minuteWheel = document.getElementById("timeWheelMinute");
+    const ampmWheel = document.getElementById("timeWheelAmpm");
+    if (!hourWheel || !minuteWheel || !ampmWheel) return;
+    const hours = Array.from({ length: 12 }, (_, i) => String(i + 1));
+    const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
+    const ampms = ["AM", "PM"];
+    buildWheel(hourWheel, hours, pendingTime.hour12 - 1, (i) => (pendingTime.hour12 = i + 1));
+    buildWheel(minuteWheel, minutes, pendingTime.minute, (i) => (pendingTime.minute = i));
+    buildWheel(ampmWheel, ampms, pendingTime.ampm === "AM" ? 0 : 1, (i) => (pendingTime.ampm = ampms[i]));
+  }
+  function showTimeSheet() {
+    if (customTimeValue) {
+      let h12 = customTimeValue.hour24 % 12;
+      if (h12 === 0) h12 = 12;
+      pendingTime = { hour12: h12, minute: customTimeValue.minute, ampm: customTimeValue.hour24 < 12 ? "AM" : "PM" };
+    }
+    timeBackdrop.classList.add("open");
+    timePickerSheet.classList.add("open");
+    setTimeout(renderTimePickers, 50);
+  }
+  function hideTimeSheet() {
+    timeBackdrop.classList.remove("open");
+    timePickerSheet.classList.remove("open");
+  }
+  if (customTimeBtn) customTimeBtn.addEventListener("click", showTimeSheet);
+  timeBackdrop.addEventListener("click", hideTimeSheet);
+  document.getElementById("closeTimeSheet").addEventListener("click", hideTimeSheet);
+  document.getElementById("timePickerDoneBtn").addEventListener("click", () => {
+    let hour24 = pendingTime.hour12 % 12;
+    if (pendingTime.ampm === "PM") hour24 += 12;
+    customTimeValue = { hour24, minute: pendingTime.minute };
+    updateCustomDateTimeLabels();
+    hideTimeSheet();
+  });
+
+  function updateCustomDateTimeLabels() {
+    if (customDateBtnLabel) {
+      if (customDateValue) {
+        const d = new Date(customDateValue.y, customDateValue.m, customDateValue.d);
+        customDateBtnLabel.textContent = d.toLocaleDateString(currentLang === "en" ? "en-IN" : currentLang, { day: "numeric", month: "short", year: "numeric" });
+        customDateBtn.classList.add("filled");
+      } else {
+        customDateBtnLabel.textContent = t("chooseDate");
+        customDateBtn.classList.remove("filled");
+      }
+    }
+    if (customTimeBtnLabel) {
+      if (customTimeValue) {
+        let h12 = customTimeValue.hour24 % 12;
+        if (h12 === 0) h12 = 12;
+        const ampm = customTimeValue.hour24 < 12 ? "AM" : "PM";
+        customTimeBtnLabel.textContent = `${h12}:${String(customTimeValue.minute).padStart(2, "0")} ${ampm}`;
+        customTimeBtn.classList.add("filled");
+      } else {
+        customTimeBtnLabel.textContent = t("chooseTime");
+        customTimeBtn.classList.remove("filled");
+      }
+    }
+  }
 
   document.getElementById("sendCustomEnquiryBtn").addEventListener("click", () => {
     const theme = document.getElementById("customTheme").value.trim();
     const size = document.getElementById("customSize").value.trim();
-    const dateVal = document.getElementById("customDate").value;
     const instructions = document.getElementById("customInstructions").value.trim();
 
     let dateLabel = "";
-    if (dateVal) {
-      const d = new Date(dateVal);
-      if (!isNaN(d)) {
-        dateLabel = d.toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" });
-      }
+    if (customDateValue) {
+      let d = new Date(customDateValue.y, customDateValue.m, customDateValue.d);
+      if (customTimeValue) d.setHours(customTimeValue.hour24, customTimeValue.minute);
+      dateLabel = customTimeValue
+        ? d.toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" })
+        : d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
     }
 
     let msg = "Hello Swader Ghor! I'd like to make a catering enquiry.\n\n";
-    msg += "*Event Type:* " + customOccasion + "\n";
+    msg += "*Event Type:* " + t(customOccasionKey) + "\n";
     if (theme) msg += "*Dishes interested in:* " + theme + "\n";
     if (size) msg += "*Number of people:* " + size + "\n";
     if (dateLabel) msg += "*Preferred date & time:* " + dateLabel + "\n";
@@ -1109,19 +1514,67 @@
 
     window.open(`https://wa.me/${WHATSAPP_NUMBERS.primary}?text=${encodeURIComponent(msg)}`, "_blank");
     hideCustomSheet();
-    showToast("Opening WhatsApp with your enquiry...");
+    showToast(t("toastOpeningWhatsappEnquiry"));
   });
 
   /* ---------------- LANGUAGE SWITCHER ---------------- */
-  function applyTranslations() {
+  /* Looks up `key` in the active language, falling back to English then to
+     the key itself so a missing translation never breaks the UI. Supports
+     {placeholder} substitution for dynamic strings (toasts, WhatsApp
+     messages, etc). This is the single source of truth for every
+     user-facing string in the app so switching language updates
+     everything (including strings generated at runtime) instantly. */
+  function t(key, vars) {
     const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+    let str = dict[key] || (TRANSLATIONS.en && TRANSLATIONS.en[key]) || key;
+    if (vars) {
+      Object.keys(vars).forEach((k) => {
+        str = str.split("{" + k + "}").join(vars[k]);
+      });
+    }
+    return str;
+  }
+
+  function applyTranslations() {
     document.querySelectorAll("[data-i18n]").forEach((el) => {
       const key = el.dataset.i18n;
-      if (dict[key]) el.textContent = dict[key];
+      const val = t(key);
+      if (val) el.textContent = val;
     });
-    const langLabel = document.getElementById("langSwitchLabel");
-    if (langLabel) langLabel.textContent = currentLang.toUpperCase();
+    document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
+      const val = t(el.dataset.i18nPh);
+      if (val) el.setAttribute("placeholder", val);
+    });
+    document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+      const val = t(el.dataset.i18nAria);
+      if (val) el.setAttribute("aria-label", val);
+    });
     document.documentElement.setAttribute("lang", currentLang);
+    /* Re-render any screens/sheets that build their own markup from JS
+       (and therefore aren't covered by the data-i18n sweep above), plus
+       anything showing a translated value cached in element text. */
+    const moreLangVal = document.getElementById("moreLanguageValue");
+    if (moreLangVal) {
+      const lang = LANGUAGES.find((l) => l.code === currentLang);
+      moreLangVal.textContent = lang ? lang.native : currentLang.toUpperCase();
+    }
+    if (document.getElementById("screen-menu").classList.contains("active")) renderMenuScreen(activeCategory);
+    if (document.getElementById("screen-cart").classList.contains("active")) renderCartScreen();
+    if (document.getElementById("screen-summary").classList.contains("active")) renderSummaryScreen();
+    renderProductGrid();
+    injectCheckoutBar();
+    if (currentProduct && productSheet.classList.contains("open")) renderProductSheetBody();
+    /* Custom catering sheet: occasion value + date/time button labels are
+       plain textContent (not data-i18n) since they carry live user state,
+       so refresh them explicitly. */
+    const occasionValEl = document.getElementById("customOccasionSelectValue");
+    if (occasionValEl && typeof customOccasionKey !== "undefined") occasionValEl.textContent = t(customOccasionKey);
+    if (typeof updateCustomDateTimeLabels === "function") updateCustomDateTimeLabels();
+    if (document.getElementById("occasionPickerSheet") && document.getElementById("occasionPickerSheet").classList.contains("open") && typeof renderOccasionGrid === "function") renderOccasionGrid();
+    const versionLabel = document.getElementById("appVersionLabel");
+    if (versionLabel && typeof APP_VERSION !== "undefined") {
+      versionLabel.textContent = t("appVersionLabel", { version: APP_VERSION });
+    }
   }
 
   function renderLanguageList() {
@@ -1144,14 +1597,14 @@
         applyTranslations();
         renderLanguageList();
         hideLanguageSheet();
-        showToast("Language updated");
+        showToast(t("toastLanguageUpdated"));
       });
     });
   }
 
   const languageBackdrop = document.getElementById("languageBackdrop");
   const languageSheet = document.getElementById("languageSheet");
-  const openLanguageBtn = document.getElementById("openLanguageSheet");
+  const openLanguageBtn = document.getElementById("openLanguageSheetMore");
   if (openLanguageBtn) {
     openLanguageBtn.addEventListener("click", () => {
       renderLanguageList();
@@ -1174,10 +1627,10 @@
 
   function showConfirm(opts) {
     const options = opts || {};
-    document.getElementById("confirmTitle").textContent = options.title || "Are you sure?";
-    document.getElementById("confirmMessage").textContent = options.message || "This action cannot be undone.";
+    document.getElementById("confirmTitle").textContent = options.title || t("areYouSure");
+    document.getElementById("confirmMessage").textContent = options.message || t("cannotBeUndone");
     const okBtn = document.getElementById("confirmOkBtn");
-    okBtn.textContent = options.okLabel || "Confirm";
+    okBtn.textContent = options.okLabel || t("confirm");
     confirmBackdrop.classList.add("open");
     confirmSheet.classList.add("open");
     return new Promise((resolve) => {
@@ -1224,7 +1677,7 @@
   const upiQrBox = document.getElementById("upiQrBox");
   if (upiQrBox) {
     upiQrBox.addEventListener("click", () => {
-      showToast("Demo QR — replace with your real UPI QR code");
+      showToast(t("toastDemoQr"));
     });
   }
 
@@ -1265,13 +1718,13 @@
         const originalHtml = btn.innerHTML;
         btn.classList.add("copied");
         btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
-        showToast("Copied to clipboard");
+        showToast(t("toastCopied"));
         setTimeout(() => {
           btn.classList.remove("copied");
           btn.innerHTML = originalHtml;
         }, 1600);
       } else {
-        showToast("Couldn't copy — please copy it manually");
+        showToast(t("toastCopyFailed"));
       }
     });
   }
@@ -1285,7 +1738,7 @@
 
   window.addEventListener("appinstalled", () => {
     installBanner.classList.add("hidden");
-    showToast("Swader Ghor installed successfully!");
+    showToast(t("toastInstalled"));
   });
 
   /* ---------------- SERVICE WORKER + UPDATE FLOW ---------------- */
@@ -1320,7 +1773,11 @@
 
   function showUpdateToast() {
     const toast = document.getElementById("toast");
-    toast.innerHTML = 'New version available &middot; <span id="updateReloadBtn" style="text-decoration:underline;cursor:pointer;">Tap to refresh</span>';
+    toast.innerHTML =
+      t("toastNewVersion") +
+      ' &middot; <span id="updateReloadBtn" style="text-decoration:underline;cursor:pointer;">' +
+      t("toastTapToRefresh") +
+      "</span>";
     toast.classList.add("show", "update-toast");
     const btn = document.getElementById("updateReloadBtn");
     if (btn) {

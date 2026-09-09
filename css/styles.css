@@ -393,6 +393,19 @@ img { max-width: 100%; }
 .promo-b i { color: var(--gold-500); }
 .promo-card strong { display: block; font-family: var(--font-display); font-size: 0.85rem; }
 
+/* Real photos layered over the icon-tile treatment. When an `image` URL is
+   present, .tile-photo covers the tile and its sibling <i> icon is hidden
+   via CSS (kept in the DOM as an instant fallback if the photo 404s, see
+   .img-fallback below). */
+.tile-photo {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;
+}
+/* .has-photo is added in JS (not :has(), which isn't supported on some
+   older Android WebViews) whenever a tile renders a real image, so the
+   placeholder icon underneath stays hidden until/unless the image errors
+   out (.img-fallback removes .has-photo so the icon shows again). */
+.has-photo > i { display: none; }
+
 /* Product grid (home) */
 .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
@@ -650,6 +663,108 @@ img { max-width: 100%; }
 .option-chip small { font-weight: 500; font-size: 0.68rem; color: var(--red-500); }
 .option-chip.active { background: var(--red-900); border-color: var(--red-900); color: var(--gold-500); }
 .option-chip.active small { color: var(--gold-400); }
+
+/* Delivery coordinates field (checkout) */
+.coords-field-row { display: flex; gap: 8px; align-items: stretch; }
+.coords-field-row input.text-field, .coords-field-row input { flex: 1; }
+.coords-locate-btn {
+  width: 46px; flex-shrink: 0; border-radius: 12px; background: var(--red-900); color: var(--gold-500);
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+  transition: transform 0.15s ease;
+}
+.coords-locate-btn:active { transform: scale(0.9); }
+.coords-locate-btn.locating i { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.field-hint { font-size: 0.72rem; color: var(--red-400); margin: 6px 0 0; line-height: 1.4; }
+.coords-map-link {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.78rem;
+  font-weight: 700; color: var(--red-800);
+}
+.coords-map-link.hidden { display: none; }
+
+/* Themed select (replaces native <select> for event type) */
+.themed-select {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  background: var(--white); border: 1.6px solid var(--gold-400); border-radius: 12px;
+  padding: 12px 14px; font-size: 0.88rem; font-weight: 700; color: var(--red-900);
+  transition: all 0.15s ease;
+}
+.themed-select:active { transform: scale(0.98); }
+.themed-select i { color: var(--gold-600); font-size: 0.8rem; }
+
+/* Event-type popup grid — sized to always fit without scrolling */
+.occasion-picker-sheet { max-height: none; overflow: visible; }
+.occasion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+.occasion-tile {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  background: var(--white); border: 1.6px solid var(--gold-200); border-radius: 14px;
+  padding: 16px 8px; font-size: 0.8rem; font-weight: 700; color: var(--red-800);
+  transition: all 0.15s ease;
+}
+.occasion-tile i { font-size: 1.3rem; color: var(--gold-600); }
+.occasion-tile.active { background: var(--red-900); border-color: var(--red-900); color: var(--gold-500); }
+.occasion-tile.active i { color: var(--gold-500); }
+
+/* Custom themed date/time field buttons */
+.custom-datetime-row { display: flex; gap: 10px; }
+.themed-datefield {
+  flex: 1; display: flex; align-items: center; gap: 8px; background: var(--white);
+  border: 1.6px solid var(--gold-400); border-radius: 12px; padding: 12px 14px;
+  font-size: 0.84rem; font-weight: 700; color: var(--red-900); transition: all 0.15s ease;
+}
+.themed-datefield:active { transform: scale(0.97); }
+.themed-datefield i { color: var(--gold-600); }
+.themed-datefield.filled { border-color: var(--red-900); background: var(--red-100); }
+
+/* Themed date picker (calendar grid) */
+.date-picker-header { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 12px; }
+.date-picker-header strong { font-family: var(--font-display); color: var(--red-950); }
+.date-nav-btn {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--gold-100); color: var(--red-900);
+  display: flex; align-items: center; justify-content: center; transition: transform 0.15s ease;
+}
+.date-nav-btn:active { transform: scale(0.88); }
+.date-picker-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.7rem; font-weight: 700; color: var(--red-400); margin-bottom: 6px; }
+.date-picker-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.date-cell {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 10px;
+  font-size: 0.84rem; font-weight: 600; color: var(--red-900); transition: all 0.15s ease;
+}
+.date-cell.empty { visibility: hidden; }
+.date-cell.disabled { color: var(--red-200); pointer-events: none; }
+.date-cell.today { box-shadow: inset 0 0 0 1.6px var(--gold-500); }
+.date-cell.active { background: var(--red-900); color: var(--gold-500); }
+.date-cell:not(.disabled):not(.empty):active { transform: scale(0.85); }
+
+/* Themed time picker (scrollable wheels) */
+.time-picker-wheels { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 8px 0 20px; }
+.time-wheel {
+  height: 180px; width: 64px; overflow-y: auto; scroll-snap-type: y mandatory;
+  border-radius: 12px; background: var(--white); box-shadow: inset 0 2px 6px rgba(107,32,32,0.08);
+  -webkit-overflow-scrolling: touch;
+}
+.time-wheel-ampm { width: 58px; }
+.time-wheel-sep { font-family: var(--font-display); font-size: 1.4rem; color: var(--red-900); padding-bottom: 2px; }
+.time-wheel-item {
+  height: 44px; display: flex; align-items: center; justify-content: center; scroll-snap-align: center;
+  font-size: 0.95rem; font-weight: 600; color: var(--red-400);
+}
+.time-wheel-item.active { color: var(--red-950); font-weight: 800; font-size: 1.05rem; }
+.time-wheel-pad { height: 68px; }
+
+/* More menu: split row (main tap area + separate action) for Our Location */
+.more-item-split { padding: 0 !important; flex-wrap: wrap; }
+.more-item-main {
+  display: flex; align-items: center; gap: 14px; flex: 1 1 100%; padding: 15px 16px 8px;
+}
+.more-item-main i:first-child { font-size: 1.2rem; color: var(--gold-600); width: 22px; text-align: center; }
+.more-item-main div { flex: 1; text-align: left; display: flex; flex-direction: column; }
+.more-item-main strong { font-size: 0.88rem; }
+.more-item-main span { font-size: 0.74rem; color: var(--red-500); }
+.more-item-action {
+  flex: 1 1 100%; text-align: right; padding: 0 16px 14px; font-size: 0.78rem; font-weight: 700;
+  color: var(--red-800); text-decoration: underline; text-underline-offset: 2px;
+}
 
 .qty-stepper { display: flex; align-items: center; gap: 16px; background: var(--white); border-radius: 12px; padding: 8px 18px; width: fit-content; box-shadow: 0 2px 8px rgba(107,32,32,0.07); }
 .qty-stepper button { width: 30px; height: 30px; border-radius: 50%; background: var(--gold-500); color: var(--red-900); font-weight: 700; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: transform 0.12s ease; }
