@@ -1237,7 +1237,7 @@
   const OCCASION_OPTIONS = [
     { key: "birthdayParty", icon: "fa-solid fa-cake-candles" },
     { key: "corporateEvent", icon: "fa-solid fa-briefcase" },
-    { key: "wedding", icon: "fa-solid fa-rings-wedding" },
+    { key: "wedding", icon: "fa-solid fa-heart" },
     { key: "houseParty", icon: "fa-solid fa-house-user" },
     { key: "otherOccasion", icon: "fa-solid fa-ellipsis" },
   ];

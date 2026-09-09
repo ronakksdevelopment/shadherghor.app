@@ -753,24 +753,6 @@ img { max-width: 100%; }
 .time-wheel-item.active { color: var(--red-950); font-weight: 800; font-size: 1.05rem; }
 .time-wheel-pad { height: 68px; }
 
-/* More menu: split row (main tap area + separate action) for Our Location.
-   Padding here is chosen so the combined box height matches a standard
-   .more-item row exactly (15px top + 15px bottom = 30px total, same as
-   .more-item's own 15px 16px), rather than stacking each part's own
-   padding on top of the other. */
-.more-item-split { padding: 0 !important; flex-wrap: wrap; }
-.more-item-main {
-  display: flex; align-items: center; gap: 14px; flex: 1 1 100%; padding: 15px 16px 6px;
-}
-.more-item-main i:first-child { font-size: 1.2rem; color: var(--gold-600); width: 22px; text-align: center; }
-.more-item-main div { flex: 1; text-align: left; display: flex; flex-direction: column; }
-.more-item-main strong { font-size: 0.88rem; }
-.more-item-main span { font-size: 0.74rem; color: var(--red-500); }
-.more-item-action {
-  flex: 1 1 100%; text-align: right; padding: 0 16px 15px; font-size: 0.78rem; font-weight: 700;
-  color: var(--red-800); text-decoration: none;
-}
-
 .qty-stepper { display: flex; align-items: center; gap: 16px; background: var(--white); border-radius: 12px; padding: 8px 18px; width: fit-content; box-shadow: 0 2px 8px rgba(107,32,32,0.07); }
 .qty-stepper button { width: 30px; height: 30px; border-radius: 50%; background: var(--gold-500); color: var(--red-900); font-weight: 700; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: transform 0.12s ease; }
 .qty-stepper button:active { transform: scale(0.85); }

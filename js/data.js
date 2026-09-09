@@ -109,7 +109,7 @@ const STORE_LNG = 91.283050;
 const MAP_LINK = "https://maps.app.goo.gl/qjv4cav9pDzmrN9o8";
 const MAP_DIRECTIONS_LINK = "https://www.google.com/maps/dir/?api=1&destination=" + STORE_LAT + "," + STORE_LNG;
 const GOOGLE_REVIEW_LINK = "https://maps.app.goo.gl/qjv4cav9pDzmrN9o8";
-const INSTAGRAM_LINK = "https://www.instagram.com/swaderghor";
+const INSTAGRAM_LINK = "https://www.instagram.com/swader.ghar";
 const FACEBOOK_LINK = "https://www.facebook.com/swaderghor";
 
 /* Highlights shown on the home screen */
