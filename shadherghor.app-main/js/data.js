@@ -3,6 +3,8 @@
    Authentic street food menu for Shadher Ghor, Agartala.
    ========================================================= */
 
+const APP_VERSION = "1.5.0";
+
 const CATEGORIES = [
   { id: "momo", name: "Momo", icon: "fa-solid fa-bowl-food", tag: "Steamed & fried" },
   { id: "chowmein", name: "Chowmein", icon: "fa-solid fa-utensils", tag: "Noodles & stir-fry" },
@@ -101,7 +103,7 @@ const HIGHLIGHTS = [
 
 /* Special offers / promo banners */
 const OFFERS = [
-  { id: "off1", icon: "fa-solid fa-truck-fast", title: "Free Delivery", sub: "Automatically applied on all orders above ₹499", tag: "Auto-applied" },
+  { id: "off1", icon: "fa-solid fa-truck-fast", title: "Free Delivery", sub: "Automatically applied on all orders above ₹499", tag: "Auto-applied", theme: "green" },
   { id: "off2", icon: "fa-solid fa-gift", title: "Combo Deals", sub: "Get 15% off on all combo meals", tag: "Limited Time" },
-  { id: "off3", icon: "fa-solid fa-bowl-food", title: "Weekend Special", sub: "Order 2 items and get a free drink", tag: "Weekend Only" },
+  { id: "off3", icon: "fa-solid fa-bowl-food", title: "Weekend Special", sub: "Order 2 items and get a free drink", tag: "Weekend Only", theme: "green" },
 ];

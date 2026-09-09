@@ -2,7 +2,7 @@
   "name": "Shadher Ghor - Order Food Online in Agartala",
   "short_name": "Shadher Ghor",
   "description": "Order delicious momo, chowmein, biryani, burgers and more online from Shadher Ghor, Agartala. Authentic street food delivered fresh.",
-  "version": "2.0.0",
+  "version": "1.5.0",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

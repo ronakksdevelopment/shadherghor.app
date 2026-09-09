@@ -1,8 +1,30 @@
 # Shadher Ghor - Ordering App (PWA)
 
-Version 2.5 - Production Ready
+Version 1.5.0 - Production Ready
 
 A mobile-first Progressive Web App for Shadher Ghor, Agartala's authentic street food vendor. Customers browse the menu, pick items with size and quantity, add to cart, add a tip, auto-detect or enter their delivery location, review an order summary and send the order directly to the shop on WhatsApp.
+
+## What's new in 1.5.0
+
+**Bug fixes**
+- Fixed a checkout-crashing bug where a stale cart entry (pointing at a removed product or size) could throw an error instead of completing the order. The cart now self-repairs on load and again right before checkout.
+- Fixed the search screen's clear (✕) button being unclickable if the icon font hadn't finished loading.
+- Fixed weak phone number validation — the field now only accepts digits and requires exactly 10 of them.
+- Fixed the home screen showing stale "in cart" quantity steppers after an order was placed and the cart was cleared.
+- Removed a redundant CSS rule (`:has()`) for hiding the bottom nav that isn't supported on some older Android devices; the app already handled this correctly in JavaScript.
+
+**Reliability**
+- Self-hosted Font Awesome and the app's fonts (Baloo 2, Poppins) instead of loading them from external CDNs. The app now makes zero external network requests and works fully offline once installed, even the very first time if the network is slow or a CDN is blocked.
+- App updates no longer swap themselves in silently under an open tab — you'll now see a "New version available" toast with a one-tap refresh.
+- Unified the version number across the app, manifest and service worker (previously showed three different numbers in different places).
+
+**Accessibility**
+- Added labels to every icon-only button (back, search, clear) for screen readers.
+- Properly linked every form field to its on-screen label.
+
+**Design**
+- Brought the logo's green into the app as a real second brand color (previously almost unused) — alternating themed offer cards and a small leaf accent on section headings.
+- Added warm, layered depth to product image tiles throughout the app.
 
 ## Features
 

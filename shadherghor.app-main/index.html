@@ -16,13 +16,11 @@
 <meta name="apple-mobile-web-app-title" content="Shadher Ghor">
 <meta name="mobile-web-app-capable" content="yes">
 
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Fonts (self-hosted for offline / PWA reliability) -->
+<link rel="stylesheet" href="assets/fonts/fonts.css">
 
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<!-- Font Awesome (self-hosted for offline / PWA reliability) -->
+<link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
 
 <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -159,9 +157,9 @@
   <!-- ---------- CATEGORY / MENU SCREEN ---------- -->
   <main id="screen-menu" class="screen">
     <header class="subbar">
-      <button class="icon-btn back-btn" data-back="screen-home"><i class="fa-solid fa-arrow-left"></i></button>
+      <button class="icon-btn back-btn" data-back="screen-home" aria-label="Back to home"><i class="fa-solid fa-arrow-left"></i></button>
       <h2 id="menuScreenTitle">All Items</h2>
-      <button class="icon-btn" id="openSearch2"><i class="fa-solid fa-magnifying-glass"></i></button>
+      <button class="icon-btn" id="openSearch2" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
     </header>
     <div class="cat-chip-row" id="chipRow"></div>
     <div class="product-list" id="productList"></div>
@@ -171,11 +169,11 @@
   <!-- ---------- SEARCH SCREEN ---------- -->
   <main id="screen-search" class="screen">
     <header class="subbar search-header">
-      <button class="icon-btn back-btn" data-back="screen-home"><i class="fa-solid fa-arrow-left"></i></button>
+      <button class="icon-btn back-btn" data-back="screen-home" aria-label="Back to home"><i class="fa-solid fa-arrow-left"></i></button>
       <div class="search-input-wrap">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchInput" placeholder="Search for momo, biryani, burgers..." autocomplete="off">
-        <i class="fa-solid fa-xmark search-clear" id="clearSearch"></i>
+        <input type="text" id="searchInput" name="searchInput" aria-label="Search menu" placeholder="Search for momo, biryani, burgers..." autocomplete="off">
+        <i class="fa-solid fa-xmark search-clear" id="clearSearch" role="button" tabindex="0" aria-label="Clear search"></i>
       </div>
     </header>
     <div class="product-list" id="searchResults"></div>
@@ -189,7 +187,7 @@
   <!-- ---------- CART / CHECKOUT SCREEN ---------- -->
   <main id="screen-cart" class="screen">
     <header class="subbar">
-      <button class="icon-btn back-btn" data-back="screen-home"><i class="fa-solid fa-arrow-left"></i></button>
+      <button class="icon-btn back-btn" data-back="screen-home" aria-label="Back to home"><i class="fa-solid fa-arrow-left"></i></button>
       <h2>Your Cart</h2>
       <button class="icon-btn danger" id="clearCartBtn" aria-label="Clear cart"><i class="fa-solid fa-trash"></i></button>
     </header>
@@ -206,7 +204,7 @@
 
       <div class="cart-block">
         <h3><i class="fa-solid fa-note-sticky"></i> Add a note for the chef</h3>
-        <textarea id="orderNote" placeholder="E.g. Extra spicy, no onions, make it mild..." rows="3"></textarea>
+        <textarea id="orderNote" name="orderNote" aria-label="Note for the chef" placeholder="E.g. Extra spicy, no onions, make it mild..." rows="3"></textarea>
       </div>
 
       <div class="cart-block">
@@ -219,7 +217,7 @@
           <button class="tip-chip" data-tip="100">₹100</button>
           <div class="tip-custom-wrap">
             <span>₹</span>
-            <input type="number" id="tipCustom" placeholder="Other" min="0">
+            <input type="number" id="tipCustom" name="tipCustom" inputmode="numeric" aria-label="Custom tip amount" placeholder="Other" min="0">
           </div>
         </div>
       </div>
@@ -253,7 +251,7 @@
   <!-- ---------- ORDER SUMMARY SCREEN ---------- -->
   <main id="screen-summary" class="screen">
     <header class="subbar">
-      <button class="icon-btn back-btn" data-back="screen-cart"><i class="fa-solid fa-arrow-left"></i></button>
+      <button class="icon-btn back-btn" data-back="screen-cart" aria-label="Back to cart"><i class="fa-solid fa-arrow-left"></i></button>
       <h2>Confirm Your Order</h2>
       <span></span>
     </header>
@@ -261,19 +259,19 @@
     <div class="summary-body">
       <div class="summary-block">
         <h3><i class="fa-solid fa-user"></i> Your Details</h3>
-        <label>Full Name *</label>
-        <input type="text" id="custName" placeholder="Enter your name" required>
-        <label>Phone Number *</label>
-        <input type="tel" id="custPhone" placeholder="10-digit mobile number" required maxlength="10">
-        <label>Delivery Address *</label>
-        <textarea id="custAddress" placeholder="House no, street, landmark, area..." rows="2" required></textarea>
+        <label for="custName">Full Name *</label>
+        <input type="text" id="custName" name="custName" placeholder="Enter your name" required autocomplete="name">
+        <label for="custPhone">Phone Number *</label>
+        <input type="tel" id="custPhone" name="custPhone" inputmode="numeric" pattern="[0-9]*" placeholder="10-digit mobile number" required maxlength="10" autocomplete="tel">
+        <label for="custAddress">Delivery Address *</label>
+        <textarea id="custAddress" name="custAddress" placeholder="House no, street, landmark, area..." rows="2" required></textarea>
         <button type="button" class="use-location-btn" id="useMyLocationBtn">
           <i class="fa-solid fa-location-crosshairs"></i> Use my current location
         </button>
-        <label>City / Pincode</label>
-        <input type="text" id="custCity" placeholder="City and pincode" value="Agartala, Tripura">
-        <label>Preferred Delivery Date &amp; Time</label>
-        <input type="text" id="custDateTime" placeholder="E.g. 6 Sept, Evening 5-7 PM">
+        <label for="custCity">City / Pincode</label>
+        <input type="text" id="custCity" name="custCity" placeholder="City and pincode" value="Agartala, Tripura" autocomplete="address-level2">
+        <label for="custDateTime">Preferred Delivery Date &amp; Time</label>
+        <input type="text" id="custDateTime" name="custDateTime" placeholder="E.g. 6 Sept, Evening 5-7 PM">
       </div>
 
       <div class="summary-block">
@@ -387,7 +385,7 @@
         </button>
       </div>
 
-      <p class="app-version">Shadher Ghor App &middot; Version 2.0</p>
+      <p class="app-version" id="appVersionLabel">Shadher Ghor App &middot; Version 1.5.0</p>
     </div>
     <div class="bottom-spacer"></div>
   </main>
@@ -441,7 +439,7 @@
     <span id="autoLocateLabel">Auto-detect my location</span>
   </button>
   <div class="loc-divider"><span>or type manually</span></div>
-  <input type="text" id="locationInput" placeholder="E.g. Krishna Nagar, Agartala, Tripura">
+  <input type="text" id="locationInput" name="locationInput" aria-label="Delivery location" placeholder="E.g. Krishna Nagar, Agartala, Tripura">
   <button class="btn-primary" id="saveLocationBtn">Save Location</button>
   <div class="loc-divider"><span>or</span></div>
   <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="map-open-btn">
@@ -483,8 +481,8 @@
   <p class="loc-desc">Tell us about your event and we'll get back to you on WhatsApp with a custom menu and price.</p>
 
   <div class="psheet-block">
-    <label>Event Type</label>
-    <div class="option-row" id="customOccasionOptions">
+    <span class="field-label" id="customOccasionLabel">Event Type</span>
+    <div class="option-row" id="customOccasionOptions" role="group" aria-labelledby="customOccasionLabel">
       <button type="button" class="option-chip active" data-occasion="Birthday Party">Birthday Party</button>
       <button type="button" class="option-chip" data-occasion="Corporate Event">Corporate Event</button>
       <button type="button" class="option-chip" data-occasion="Wedding">Wedding</button>
@@ -494,23 +492,23 @@
   </div>
 
   <div class="psheet-block">
-    <label>Dishes You're Interested In</label>
-    <input type="text" id="customTheme" class="text-field" placeholder="e.g. Momo platter, Biryani, Chowmein, Burgers...">
+    <label for="customTheme">Dishes You're Interested In</label>
+    <input type="text" id="customTheme" name="customTheme" class="text-field" placeholder="e.g. Momo platter, Biryani, Chowmein, Burgers...">
   </div>
 
   <div class="psheet-block">
-    <label>Number of People</label>
-    <input type="text" id="customSize" class="text-field" placeholder="e.g. 20-25 people">
+    <label for="customSize">Number of People</label>
+    <input type="text" id="customSize" name="customSize" class="text-field" placeholder="e.g. 20-25 people">
   </div>
 
   <div class="psheet-block">
-    <label>Preferred Date &amp; Time</label>
-    <input type="datetime-local" id="customDate" class="text-field">
+    <label for="customDate">Preferred Date &amp; Time</label>
+    <input type="datetime-local" id="customDate" name="customDate" class="text-field">
   </div>
 
   <div class="psheet-block">
-    <label>Special Instructions <span class="optional-tag">Optional</span></label>
-    <textarea id="customInstructions" class="text-field" rows="3" placeholder="Dietary restrictions, preferred cuisine, delivery notes, etc."></textarea>
+    <label for="customInstructions">Special Instructions <span class="optional-tag">Optional</span></label>
+    <textarea id="customInstructions" name="customInstructions" class="text-field" rows="3" placeholder="Dietary restrictions, preferred cuisine, delivery notes, etc."></textarea>
   </div>
 
   <button class="btn-whatsapp" id="sendCustomEnquiryBtn">

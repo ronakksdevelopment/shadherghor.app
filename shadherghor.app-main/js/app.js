@@ -6,7 +6,7 @@
   "use strict";
 
   /* ---------------- STATE ---------------- */
-  let cart = loadCart();
+  let cart = sanitizeCart(loadCart());
   let activeCategory = "all";
   let currentProduct = null;
   let selectedSizeIndex = 0;
@@ -35,6 +35,24 @@
       return [];
     }
   }
+  /* Defensively strips any cart line that points at a product/size that no
+     longer exists in the catalog (e.g. after a menu update ships). Without
+     this, a stale cart line could crash checkout. */
+  function sanitizeCart(rawCart) {
+    if (!Array.isArray(rawCart)) return [];
+    const clean = rawCart.filter((l) => {
+      if (!l || typeof l.productId !== "string") return false;
+      const p = getProduct(l.productId);
+      if (!p || !Array.isArray(p.sizes) || !p.sizes.length) return false;
+      if (!p.sizes[l.sizeIndex]) return false;
+      if (!(l.qty > 0)) return false;
+      return true;
+    });
+    if (clean.length !== rawCart.length) {
+      localStorage.setItem("sg_cart", JSON.stringify(clean));
+    }
+    return clean;
+  }
   function saveCart() {
     localStorage.setItem("sg_cart", JSON.stringify(cart));
   }
@@ -58,7 +76,8 @@
     return cart.reduce((sum, l) => {
       const p = getProduct(l.productId);
       if (!p) return sum;
-      const price = p.sizes[l.sizeIndex] ? p.sizes[l.sizeIndex].price : p.basePrice;
+      const size = p.sizes && p.sizes[l.sizeIndex];
+      const price = size ? size.price : p.basePrice;
       return sum + price * l.qty;
     }, 0);
   }
@@ -133,6 +152,7 @@
   });
 
   document.getElementById("backHomeBtn").addEventListener("click", () => {
+    renderProductGrid();
     showScreen("screen-home");
   });
 
@@ -159,7 +179,7 @@
     if (!wrap || typeof OFFERS === "undefined") return;
     wrap.innerHTML = OFFERS.map(
       (o) => `
-      <div class="offer-card">
+      <div class="offer-card${o.theme === "green" ? " offer-card--green" : ""}">
         <div class="offer-icon"><i class="${o.icon}"></i></div>
         <div class="offer-body">
           <strong>${o.title}</strong>
@@ -384,12 +404,12 @@
       <p class="product-sheet-desc">${p.desc}</p>
 
       <div class="psheet-block">
-        <label>Select Size / Portion</label>
-        <div class="option-row" id="sizeOptions">
+        <span class="field-label" id="sizeOptionsLabel">Select Size / Portion</span>
+        <div class="option-row" id="sizeOptions" role="group" aria-labelledby="sizeOptionsLabel">
           ${p.sizes
             .map(
               (s, i) => `
-            <button class="option-chip ${i === selectedSizeIndex ? "active" : ""}" data-size="${i}">
+            <button type="button" class="option-chip ${i === selectedSizeIndex ? "active" : ""}" data-size="${i}" aria-pressed="${i === selectedSizeIndex}">
               ${s.label}<small>${formatMoney(s.price)}</small>
             </button>`
             )
@@ -398,11 +418,11 @@
       </div>
 
       <div class="psheet-block">
-        <label>Quantity</label>
-        <div class="qty-stepper">
-          <button id="qtyMinus"><i class="fa-solid fa-minus"></i></button>
-          <span id="qtyValue">${selectedQty}</span>
-          <button id="qtyPlus"><i class="fa-solid fa-plus"></i></button>
+        <span class="field-label" id="qtyLabel">Quantity</span>
+        <div class="qty-stepper" role="group" aria-labelledby="qtyLabel">
+          <button type="button" id="qtyMinus" aria-label="Decrease quantity"><i class="fa-solid fa-minus"></i></button>
+          <span id="qtyValue" aria-live="polite">${selectedQty}</span>
+          <button type="button" id="qtyPlus" aria-label="Increase quantity"><i class="fa-solid fa-plus"></i></button>
         </div>
       </div>
 
@@ -673,6 +693,7 @@
     itemsWrap.innerHTML = cart
       .map((line) => {
         const p = getProduct(line.productId);
+        if (!p || !p.sizes[line.sizeIndex]) return "";
         const size = p.sizes[line.sizeIndex];
         return `<div class="summary-item-row">
           <span class="si-name">${p.name} x${line.qty}<span class="si-meta">${size.label}</span></span>
@@ -710,6 +731,13 @@
     }
   }
 
+  const custPhoneInput = document.getElementById("custPhone");
+  if (custPhoneInput) {
+    custPhoneInput.addEventListener("input", (e) => {
+      e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+    });
+  }
+
   document.getElementById("waNumSelect").addEventListener("click", (e) => {
     const chip = e.target.closest(".wa-num-chip");
     if (!chip) return;
@@ -734,9 +762,19 @@
       else document.getElementById("custAddress").focus();
       return;
     }
-    if (phone.length < 10) {
-      showToast("Please enter a valid phone number");
+    const phoneDigits = phone.replace(/\D/g, "");
+    if (phoneDigits.length !== 10) {
+      showToast("Please enter a valid 10-digit phone number");
       document.getElementById("custPhone").focus();
+      return;
+    }
+
+    /* Safety net: drop any cart line whose product/size vanished since the
+       summary screen was rendered, so we never build a broken message. */
+    cart = sanitizeCart(cart);
+    if (cart.length === 0) {
+      showToast("Your cart is empty. Please add items again.");
+      showScreen("screen-cart");
       return;
     }
 
@@ -750,6 +788,7 @@
     msg += `*Order Details:*\n`;
     cart.forEach((line) => {
       const p = getProduct(line.productId);
+      if (!p || !p.sizes[line.sizeIndex]) return;
       const size = p.sizes[line.sizeIndex];
       msg += `- ${p.name} (${size.label}) x${line.qty} = ${formatMoney(size.price * line.qty)}\n`;
     });
@@ -766,7 +805,7 @@
 
     msg += `\n\n*Customer Details:*`;
     msg += `\nName: ${name}`;
-    msg += `\nPhone: ${phone}`;
+    msg += `\nPhone: ${phoneDigits}`;
     msg += `\nAddress: ${address}`;
     if (city) msg += `\nCity/Pincode: ${city}`;
     if (dateTime) msg += `\nPreferred Delivery: ${dateTime}`;
@@ -1041,11 +1080,50 @@
     showToast("Shadher Ghor installed successfully!");
   });
 
-  /* ---------------- SERVICE WORKER ---------------- */
+  /* ---------------- SERVICE WORKER + UPDATE FLOW ---------------- */
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js").catch(() => {});
+      navigator.serviceWorker
+        .register("service-worker.js")
+        .then((reg) => {
+          /* A new SW found while this tab is open: let the user know and
+             offer a one-tap refresh instead of silently swapping caches
+             underneath an active session. */
+          reg.addEventListener("updatefound", () => {
+            const newWorker = reg.installing;
+            if (!newWorker) return;
+            newWorker.addEventListener("statechange", () => {
+              if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                showUpdateToast();
+              }
+            });
+          });
+        })
+        .catch(() => {});
+
+      let reloadedOnce = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (reloadedOnce) return;
+        reloadedOnce = true;
+        window.location.reload();
+      });
     });
+  }
+
+  function showUpdateToast() {
+    const toast = document.getElementById("toast");
+    toast.innerHTML = 'New version available &middot; <span id="updateReloadBtn" style="text-decoration:underline;cursor:pointer;">Tap to refresh</span>';
+    toast.classList.add("show", "update-toast");
+    const btn = document.getElementById("updateReloadBtn");
+    if (btn) {
+      btn.addEventListener("click", () => {
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker.getRegistration().then((reg) => {
+            if (reg && reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
+          });
+        }
+      });
+    }
   }
 
   /* ---------------- INIT ---------------- */
@@ -1055,6 +1133,10 @@
     renderOffers();
     renderReviewHighlights();
     updateCartBadges();
+    const versionLabel = document.getElementById("appVersionLabel");
+    if (versionLabel && typeof APP_VERSION !== "undefined") {
+      versionLabel.textContent = "Shadher Ghor App \u00B7 Version " + APP_VERSION;
+    }
     if (deliveryLocation) {
       document.getElementById("currentLocation").innerHTML =
         (deliveryLocation.length > 22 ? deliveryLocation.slice(0, 22) + "..." : deliveryLocation) + ' <i class="fa-solid fa-chevron-down"></i>';

@@ -1,5 +1,5 @@
 // Bump this on every deploy
-const CACHE_NAME = "shadher-ghor-v2.0.0";
+const CACHE_NAME = "shadher-ghor-v1.5.0";
 const PRECACHE_URLS = [
   "./",
   "./index.html",
@@ -18,6 +18,20 @@ const PRECACHE_URLS = [
   "./assets/icons/icon-512.png",
   "./assets/icons/icon-512-maskable.png",
   "./assets/icons/favicon.png",
+  "./assets/fontawesome/css/all.min.css",
+  "./assets/fontawesome/webfonts/fa-solid-900.woff2",
+  "./assets/fontawesome/webfonts/fa-brands-400.woff2",
+  "./assets/fontawesome/webfonts/fa-regular-400.woff2",
+  "./assets/fonts/fonts.css",
+  "./assets/fonts/baloo-2-latin-500-normal.woff2",
+  "./assets/fonts/baloo-2-latin-600-normal.woff2",
+  "./assets/fonts/baloo-2-latin-700-normal.woff2",
+  "./assets/fonts/baloo-2-latin-800-normal.woff2",
+  "./assets/fonts/poppins-latin-400-normal.woff2",
+  "./assets/fonts/poppins-latin-500-normal.woff2",
+  "./assets/fonts/poppins-latin-600-normal.woff2",
+  "./assets/fonts/poppins-latin-700-normal.woff2",
+  "./assets/fonts/poppins-latin-800-normal.woff2",
 ];
 
 const REVALIDATE_EXTENSIONS = [".html", ".css", ".js", ".json"];
@@ -30,7 +44,15 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)).catch(() => {})
   );
-  self.skipWaiting();
+  // Do NOT skipWaiting automatically here: the new SW stays "waiting" until
+  // the page explicitly asks it to activate (see the SKIP_WAITING message
+  // below), so an open tab doesn't have its cache swapped without notice.
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("activate", (event) => {
