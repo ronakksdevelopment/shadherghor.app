@@ -808,7 +808,7 @@
 
     /* Intentionally no default/auto-fill of the address field here. The
        customer must either type their address or tap "Use my current
-       location" — we never silently pre-fill it with the general saved
+       location"; we never silently pre-fill it with the general saved
        delivery area, since that could be stale or imprecise. */
 
     /* Coordinates field always reflects current state on (re)render, so
@@ -875,7 +875,7 @@
     }
 
     /* Sync deliveryCoords from whatever is currently typed in the
-       coordinates field — the customer may have hand-edited an
+       coordinates field, since the customer may have hand-edited an
        auto-filled pin, or typed one in manually without ever tapping
        the locate button. Delivery pricing must always reflect this
        field's current value, not a stale auto-detected one. */
@@ -919,7 +919,7 @@
       const p = getProduct(line.productId);
       if (!p || !p.sizes[line.sizeIndex]) return;
       const size = p.sizes[line.sizeIndex];
-      msg += `• ${p.name} (${size.label}) x${line.qty} — ${formatMoney(size.price * line.qty)}\n`;
+      msg += `• ${p.name} (${size.label}) x${line.qty}: ${formatMoney(size.price * line.qty)}\n`;
     });
     msg += `\n*BILL SUMMARY*\n`;
     msg += `Item Total: ${formatMoney(itemTotal)}\n`;
@@ -1004,7 +1004,7 @@
   }
 
   /* Straight-line distance in km from the store to the customer's pinned
-     delivery coordinates. Returns null if no coordinates are set yet —
+     delivery coordinates. Returns null if no coordinates are set yet;
      callers must not fall back to any area/place-name based estimate. */
   function deliveryDistanceKm() {
     if (!deliveryCoords) return null;
@@ -1396,7 +1396,7 @@
       if (!el) return;
       const top = el.offsetTop - wheelEl.clientHeight / 2 + el.clientHeight / 2;
       if (typeof wheelEl.scrollTo === "function") {
-        wheelEl.scrollTo({ top, behavior: smooth ? "smooth" : "instant" });
+        wheelEl.scrollTo({ top, behavior: smooth ? "smooth" : "auto" });
       } else {
         wheelEl.scrollTop = top;
       }
@@ -1802,6 +1802,15 @@
     const versionLabel = document.getElementById("appVersionLabel");
     if (versionLabel && typeof APP_VERSION !== "undefined") {
       versionLabel.textContent = "Swader Ghor App \u00B7 Version " + APP_VERSION;
+    }
+    /* Both "rate us" links point at the same Google Maps listing, driven
+       from one constant so they can never drift apart again (this is what
+       caused the More-menu link to go stale with a broken placeid= URL). */
+    if (typeof GOOGLE_REVIEW_LINK !== "undefined") {
+      const rateUsBtn = document.getElementById("rateUsBtn");
+      if (rateUsBtn) rateUsBtn.href = GOOGLE_REVIEW_LINK;
+      const rateUsOnGoogleItem = document.getElementById("rateUsOnGoogleItem");
+      if (rateUsOnGoogleItem) rateUsOnGoogleItem.href = GOOGLE_REVIEW_LINK;
     }
     if (deliveryLocation) {
       document.getElementById("currentLocation").innerHTML =

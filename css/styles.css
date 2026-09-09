@@ -644,6 +644,7 @@ img { max-width: 100%; }
   font-family: var(--font-body); resize: vertical;
 }
 .text-field:focus { outline: none; border-color: var(--gold-500); }
+.text-field-compact { resize: none; }
 .photo-upload {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
   border: 2px dashed var(--gold-400); border-radius: 14px; padding: 22px 16px; text-align: center;
@@ -692,7 +693,7 @@ img { max-width: 100%; }
 .themed-select:active { transform: scale(0.98); }
 .themed-select i { color: var(--gold-600); font-size: 0.8rem; }
 
-/* Event-type popup grid — sized to always fit without scrolling */
+/* Event-type popup grid, sized to always fit without scrolling */
 .occasion-picker-sheet { max-height: none; overflow: visible; }
 .occasion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
 .occasion-tile {
@@ -752,18 +753,22 @@ img { max-width: 100%; }
 .time-wheel-item.active { color: var(--red-950); font-weight: 800; font-size: 1.05rem; }
 .time-wheel-pad { height: 68px; }
 
-/* More menu: split row (main tap area + separate action) for Our Location */
+/* More menu: split row (main tap area + separate action) for Our Location.
+   Padding here is chosen so the combined box height matches a standard
+   .more-item row exactly (15px top + 15px bottom = 30px total, same as
+   .more-item's own 15px 16px), rather than stacking each part's own
+   padding on top of the other. */
 .more-item-split { padding: 0 !important; flex-wrap: wrap; }
 .more-item-main {
-  display: flex; align-items: center; gap: 14px; flex: 1 1 100%; padding: 15px 16px 8px;
+  display: flex; align-items: center; gap: 14px; flex: 1 1 100%; padding: 15px 16px 6px;
 }
 .more-item-main i:first-child { font-size: 1.2rem; color: var(--gold-600); width: 22px; text-align: center; }
 .more-item-main div { flex: 1; text-align: left; display: flex; flex-direction: column; }
 .more-item-main strong { font-size: 0.88rem; }
 .more-item-main span { font-size: 0.74rem; color: var(--red-500); }
 .more-item-action {
-  flex: 1 1 100%; text-align: right; padding: 0 16px 14px; font-size: 0.78rem; font-weight: 700;
-  color: var(--red-800); text-decoration: underline; text-underline-offset: 2px;
+  flex: 1 1 100%; text-align: right; padding: 0 16px 15px; font-size: 0.78rem; font-weight: 700;
+  color: var(--red-800); text-decoration: none;
 }
 
 .qty-stepper { display: flex; align-items: center; gap: 16px; background: var(--white); border-radius: 12px; padding: 8px 18px; width: fit-content; box-shadow: 0 2px 8px rgba(107,32,32,0.07); }
@@ -927,7 +932,7 @@ img { max-width: 100%; }
   box-shadow: 0 -6px 20px rgba(107,32,32,0.1); z-index: 210;
 }
 /* Bottom nav / float cart are hidden on the summary & success screens by
-   the .force-hidden class toggled in showScreen() (js/app.js) — kept in one
+   the .force-hidden class toggled in showScreen() (js/app.js), kept in one
    place rather than duplicated here via :has(), which isn't supported on
    older Android WebViews. */
 .btn-whatsapp {
