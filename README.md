@@ -1,8 +1,8 @@
-# Shadher Ghor - Ordering App (PWA)
+# Swader Ghor - Ordering App (PWA)
 
 Version 1.5.0 - Production Ready
 
-A mobile-first Progressive Web App for Shadher Ghor, Agartala's authentic street food vendor. Customers browse the menu, pick items with size and quantity, add to cart, add a tip, auto-detect or enter their delivery location, review an order summary and send the order directly to the shop on WhatsApp.
+A mobile-first Progressive Web App for Swader Ghor, Agartala's authentic street food vendor. Customers browse the menu, pick items with size and quantity, add to cart, add a tip, auto-detect or enter their delivery location, review an order summary and send the order directly to the shop on WhatsApp.
 
 ## What's new in 1.5.0
 
@@ -78,6 +78,6 @@ Store name, address, coordinates, WhatsApp number, Instagram/Facebook links, the
 
 ## Notes
 
-- Product data reflects Shadher Ghor's actual menu and prices.
+- Product data reflects Swader Ghor's actual menu and prices.
 - Geolocation auto-detect uses the free OpenStreetMap Nominatim API.
 - The custom enquiry form sends a pre-filled WhatsApp message.

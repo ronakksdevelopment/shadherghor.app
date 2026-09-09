@@ -1,5 +1,5 @@
 /* =========================================================
-   SHADHER GHOR - APP LOGIC
+   SWADER GHOR - APP LOGIC
    ========================================================= */
 
 (function () {
@@ -17,6 +17,7 @@
   let selectedPayMethod = "Cash on Delivery";
   let selectedWaNumber = WHATSAPP_NUMBERS.primary;
   let floatCartDismissed = false;
+  let currentLang = localStorage.getItem("sg_lang") || "en";
 
   /* ---------------- SPLASH ---------------- */
   const splash = document.getElementById("splash");
@@ -143,7 +144,15 @@
   });
 
   document.querySelectorAll("[data-back]").forEach((btn) => {
-    btn.addEventListener("click", () => showScreen(btn.dataset.back));
+    btn.addEventListener("click", () => {
+      const target = btn.dataset.back;
+      /* Re-render the cart screen whenever we land back on it so the
+         dynamically-injected checkout bar (removed by showScreen() on
+         every other screen) gets rebuilt immediately, instead of only
+         reappearing after a bottom-nav tap. */
+      if (target === "screen-cart") renderCartScreen();
+      showScreen(target);
+    });
   });
 
   document.getElementById("heroShopBtn").addEventListener("click", () => {
@@ -668,11 +677,21 @@
     chip.classList.add("active");
     selectedPayMethod = chip.dataset.pay;
     renderSummaryScreen();
+    /* Show the UPI ID / phone / demo QR sheet whenever UPI is picked, so
+       the customer can copy the payment details before checking out. */
+    if (chip.dataset.pay === "UPI / Online (pay on delivery link)") {
+      showUpiSheet();
+    }
   });
 
-  document.getElementById("clearCartBtn").addEventListener("click", () => {
+  document.getElementById("clearCartBtn").addEventListener("click", async () => {
     if (cart.length === 0) return;
-    if (confirm("Remove all items from your cart?")) {
+    const confirmed = await showConfirm({
+      title: "Clear your cart?",
+      message: "This will remove all items from your cart. This action cannot be undone.",
+      okLabel: "Clear Cart",
+    });
+    if (confirmed) {
       cart = [];
       saveCart();
       updateCartBadges();
@@ -726,15 +745,32 @@
       "Payment method: " + selectedPayMethod +
       (codFee > 0 ? ` (includes distance-based COD charge)` : "");
 
-    if (deliveryLocation && !document.getElementById("custAddress").value) {
-      document.getElementById("custAddress").value = deliveryLocation;
-    }
+    /* Intentionally no default/auto-fill of the address field here. The
+       customer must either type their address or tap "Use my current
+       location" — we never silently pre-fill it with the general saved
+       delivery area, since that could be stale or imprecise. */
   }
 
   const custPhoneInput = document.getElementById("custPhone");
   if (custPhoneInput) {
     custPhoneInput.addEventListener("input", (e) => {
       e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+    });
+  }
+
+  /* If the customer hand-edits the address after we auto-filled it from
+     GPS, the typed text and the pinned coordinates can drift apart. Keep
+     the coordinates (still useful context) but track the divergence so we
+     never claim the pin matches an address the customer has since
+     rewritten from scratch. */
+  let lastAutoFilledAddress = "";
+  let addressEditedAfterLocate = false;
+  const custAddressInput = document.getElementById("custAddress");
+  if (custAddressInput) {
+    custAddressInput.addEventListener("input", (e) => {
+      if (lastAutoFilledAddress && e.target.value.trim() !== lastAutoFilledAddress.trim()) {
+        addressEditedAfterLocate = true;
+      }
     });
   }
 
@@ -774,6 +810,7 @@
     cart = sanitizeCart(cart);
     if (cart.length === 0) {
       showToast("Your cart is empty. Please add items again.");
+      renderCartScreen();
       showScreen("screen-cart");
       return;
     }
@@ -784,7 +821,7 @@
     const codFee = codDistanceFee();
     const grandTotal = itemTotal + deliveryFee + codFee + selectedTip;
 
-    let msg = `Hello Shadher Ghor! I would like to place an order.\n\n`;
+    let msg = `Hello Swader Ghor! I would like to place an order.\n\n`;
     msg += `*Order Details:*\n`;
     cart.forEach((line) => {
       const p = getProduct(line.productId);
@@ -810,7 +847,10 @@
     if (city) msg += `\nCity/Pincode: ${city}`;
     if (dateTime) msg += `\nPreferred Delivery: ${dateTime}`;
     if (deliveryCoords) {
-      msg += `\nLocation Pin: https://www.google.com/maps?q=${deliveryCoords.lat},${deliveryCoords.lng}`;
+      msg += `\n*Exact Location (GPS):* https://maps.google.com/?q=${deliveryCoords.lat},${deliveryCoords.lng}`;
+      if (addressEditedAfterLocate) {
+        msg += ` (note: address text edited after pinning)`;
+      }
     }
 
     msg += `\n\nPlease confirm my order. Thank you!`;
@@ -963,6 +1003,8 @@
     useMyLocationBtn.addEventListener("click", () => {
       runAutoLocate(useMyLocationBtn, null, (label) => {
         document.getElementById("custAddress").value = label;
+        lastAutoFilledAddress = label;
+        addressEditedAfterLocate = false;
         useMyLocationBtn.innerHTML = '<i class="fa-solid fa-check"></i> Location applied';
         renderSummaryScreen();
         setTimeout(() => {
@@ -1010,7 +1052,7 @@
     deferredPrompt.prompt();
     const choice = await deferredPrompt.userChoice;
     if (choice.outcome === "accepted") {
-      showToast("Installing Shadher Ghor...");
+      showToast("Installing Swader Ghor...");
     }
     deferredPrompt = null;
     installBanner.classList.add("hidden");
@@ -1057,7 +1099,7 @@
       }
     }
 
-    let msg = "Hello Shadher Ghor! I'd like to make a catering enquiry.\n\n";
+    let msg = "Hello Swader Ghor! I'd like to make a catering enquiry.\n\n";
     msg += "*Event Type:* " + customOccasion + "\n";
     if (theme) msg += "*Dishes interested in:* " + theme + "\n";
     if (size) msg += "*Number of people:* " + size + "\n";
@@ -1070,6 +1112,172 @@
     showToast("Opening WhatsApp with your enquiry...");
   });
 
+  /* ---------------- LANGUAGE SWITCHER ---------------- */
+  function applyTranslations() {
+    const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const key = el.dataset.i18n;
+      if (dict[key]) el.textContent = dict[key];
+    });
+    const langLabel = document.getElementById("langSwitchLabel");
+    if (langLabel) langLabel.textContent = currentLang.toUpperCase();
+    document.documentElement.setAttribute("lang", currentLang);
+  }
+
+  function renderLanguageList() {
+    const wrap = document.getElementById("languageList");
+    if (!wrap || typeof LANGUAGES === "undefined") return;
+    wrap.innerHTML = LANGUAGES.map(
+      (l) => `
+      <button type="button" class="language-option ${l.code === currentLang ? "active" : ""}" data-lang="${l.code}">
+        <div class="lang-names">
+          <span class="lang-native">${l.native}</span>
+          <span class="lang-english">${l.label}</span>
+        </div>
+        <i class="fa-solid fa-circle-check lang-check"></i>
+      </button>`
+    ).join("");
+    wrap.querySelectorAll("[data-lang]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        currentLang = btn.dataset.lang;
+        localStorage.setItem("sg_lang", currentLang);
+        applyTranslations();
+        renderLanguageList();
+        hideLanguageSheet();
+        showToast("Language updated");
+      });
+    });
+  }
+
+  const languageBackdrop = document.getElementById("languageBackdrop");
+  const languageSheet = document.getElementById("languageSheet");
+  const openLanguageBtn = document.getElementById("openLanguageSheet");
+  if (openLanguageBtn) {
+    openLanguageBtn.addEventListener("click", () => {
+      renderLanguageList();
+      languageBackdrop.classList.add("open");
+      languageSheet.classList.add("open");
+    });
+  }
+  function hideLanguageSheet() {
+    languageBackdrop.classList.remove("open");
+    languageSheet.classList.remove("open");
+  }
+  if (languageBackdrop) languageBackdrop.addEventListener("click", hideLanguageSheet);
+  const closeLanguageBtn = document.getElementById("closeLanguageSheet");
+  if (closeLanguageBtn) closeLanguageBtn.addEventListener("click", hideLanguageSheet);
+
+  /* ---------------- CUSTOM CONFIRM SHEET (replaces browser confirm()) ---------------- */
+  const confirmBackdrop = document.getElementById("confirmBackdrop");
+  const confirmSheet = document.getElementById("confirmSheet");
+  let confirmResolver = null;
+
+  function showConfirm(opts) {
+    const options = opts || {};
+    document.getElementById("confirmTitle").textContent = options.title || "Are you sure?";
+    document.getElementById("confirmMessage").textContent = options.message || "This action cannot be undone.";
+    const okBtn = document.getElementById("confirmOkBtn");
+    okBtn.textContent = options.okLabel || "Confirm";
+    confirmBackdrop.classList.add("open");
+    confirmSheet.classList.add("open");
+    return new Promise((resolve) => {
+      confirmResolver = resolve;
+    });
+  }
+  function hideConfirmSheet(result) {
+    confirmBackdrop.classList.remove("open");
+    confirmSheet.classList.remove("open");
+    if (confirmResolver) {
+      confirmResolver(result);
+      confirmResolver = null;
+    }
+  }
+  document.getElementById("confirmOkBtn").addEventListener("click", () => hideConfirmSheet(true));
+  document.getElementById("confirmCancelBtn").addEventListener("click", () => hideConfirmSheet(false));
+  confirmBackdrop.addEventListener("click", () => hideConfirmSheet(false));
+
+  /* ---------------- UPI PAYMENT SHEET ---------------- */
+  const upiBackdrop = document.getElementById("upiBackdrop");
+  const upiSheet = document.getElementById("upiSheet");
+
+  function showUpiSheet() {
+    const idEl = document.getElementById("upiIdValue");
+    const phoneEl = document.getElementById("upiPhoneValue");
+    if (idEl && typeof UPI_ID !== "undefined") idEl.textContent = UPI_ID;
+    if (phoneEl && typeof PHONE_DISPLAY !== "undefined") phoneEl.textContent = PHONE_DISPLAY;
+    upiBackdrop.classList.add("open");
+    upiSheet.classList.add("open");
+  }
+  function hideUpiSheet() {
+    upiBackdrop.classList.remove("open");
+    upiSheet.classList.remove("open");
+  }
+  if (upiBackdrop) upiBackdrop.addEventListener("click", hideUpiSheet);
+  const closeUpiBtn = document.getElementById("closeUpiSheet");
+  if (closeUpiBtn) closeUpiBtn.addEventListener("click", hideUpiSheet);
+  const upiDoneBtn = document.getElementById("upiDoneBtn");
+  if (upiDoneBtn) upiDoneBtn.addEventListener("click", hideUpiSheet);
+
+  /* Demo QR box: tapping it is a stub for a future real QR (static UPI
+     image or dynamically generated code). Kept obviously "Demo" so it's
+     easy to spot and swap out later. */
+  const upiQrBox = document.getElementById("upiQrBox");
+  if (upiQrBox) {
+    upiQrBox.addEventListener("click", () => {
+      showToast("Demo QR — replace with your real UPI QR code");
+    });
+  }
+
+  async function copyTextToClipboard(text) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch (e) {
+      /* fall through to legacy method */
+    }
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function wireCopyButton(btnId) {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    btn.addEventListener("click", async () => {
+      const targetId = btn.dataset.copyTarget;
+      const targetEl = document.getElementById(targetId);
+      if (!targetEl) return;
+      const ok = await copyTextToClipboard(targetEl.textContent.trim());
+      if (ok) {
+        const originalHtml = btn.innerHTML;
+        btn.classList.add("copied");
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+        showToast("Copied to clipboard");
+        setTimeout(() => {
+          btn.classList.remove("copied");
+          btn.innerHTML = originalHtml;
+        }, 1600);
+      } else {
+        showToast("Couldn't copy — please copy it manually");
+      }
+    });
+  }
+  wireCopyButton("copyUpiBtn");
+  wireCopyButton("copyPhoneBtn");
+
   document.getElementById("dismissInstall").addEventListener("click", () => {
     installBanner.classList.add("hidden");
     sessionStorage.setItem("sg_install_dismissed", "1");
@@ -1077,7 +1285,7 @@
 
   window.addEventListener("appinstalled", () => {
     installBanner.classList.add("hidden");
-    showToast("Shadher Ghor installed successfully!");
+    showToast("Swader Ghor installed successfully!");
   });
 
   /* ---------------- SERVICE WORKER + UPDATE FLOW ---------------- */
@@ -1128,6 +1336,7 @@
 
   /* ---------------- INIT ---------------- */
   function init() {
+    applyTranslations();
     renderCategories();
     renderProductGrid();
     renderOffers();
@@ -1135,7 +1344,7 @@
     updateCartBadges();
     const versionLabel = document.getElementById("appVersionLabel");
     if (versionLabel && typeof APP_VERSION !== "undefined") {
-      versionLabel.textContent = "Shadher Ghor App \u00B7 Version " + APP_VERSION;
+      versionLabel.textContent = "Swader Ghor App \u00B7 Version " + APP_VERSION;
     }
     if (deliveryLocation) {
       document.getElementById("currentLocation").innerHTML =

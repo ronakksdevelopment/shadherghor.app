@@ -1,5 +1,5 @@
 // Bump this on every deploy
-const CACHE_NAME = "shadher-ghor-v1.5.0";
+const CACHE_NAME = "swader-ghor-v2.0.0";
 const PRECACHE_URLS = [
   "./",
   "./index.html",

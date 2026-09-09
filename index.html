@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Shadher Ghor - Order Food Online in Agartala</title>
-<meta name="description" content="Order delicious momo, chowmein, biryani, burgers and more online from Shadher Ghor, Agartala. Authentic street food delivered fresh.">
+<title>Swader Ghor - Order Food Online in Agartala</title>
+<meta name="description" content="Order delicious momo, chowmein, biryani, burgers and more online from Swader Ghor, Agartala. Authentic street food delivered fresh.">
 <meta name="theme-color" content="#6B2020">
 
 <!-- PWA -->
@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Shadher Ghor">
+<meta name="apple-mobile-web-app-title" content="Swader Ghor">
 <meta name="mobile-web-app-capable" content="yes">
 
 <!-- Fonts (self-hosted for offline / PWA reliability) -->
@@ -31,8 +31,8 @@
   <div class="splash-blob blob1"></div>
   <div class="splash-blob blob2"></div>
   <div class="splash-logo-wrap">
-    <div class="splash-logo"><img src="assets/icons/icon-192.png" alt="Shadher Ghor logo"></div>
-    <h1 class="splash-title">Shadher<span class="amp">Ghor</span></h1>
+    <div class="splash-logo"><img src="assets/icons/icon-192.png" alt="Swader Ghor logo"></div>
+    <h1 class="splash-title">Swader<span class="amp">Ghor</span></h1>
     <p class="splash-tag">Authentic street food, fresh & fast</p>
   </div>
   <div class="splash-loader"><span></span><span></span><span></span></div>
@@ -42,7 +42,7 @@
 <div id="installBanner" class="install-banner hidden">
   <div class="install-icon"><img src="assets/icons/icon-96.png" alt=""></div>
   <div class="install-text">
-    <strong>Install Shadher Ghor</strong>
+    <strong>Install Swader Ghor</strong>
     <span>Add to home screen for the full app experience</span>
   </div>
   <button id="installBtn" class="btn-install">Install</button>
@@ -55,11 +55,19 @@
   <!-- ---------- HOME SCREEN ---------- -->
   <main id="screen-home" class="screen active">
 
+    <div class="lang-strip">
+      <button class="lang-switch-btn" id="openLanguageSheet" aria-label="Change language">
+        <i class="fa-solid fa-language"></i>
+        <span id="langSwitchLabel">EN</span>
+        <i class="fa-solid fa-chevron-down lang-chevron"></i>
+      </button>
+    </div>
+
     <header class="topbar">
       <div class="topbar-loc" id="openLocationSheet">
         <i class="fa-solid fa-location-dot loc-pin"></i>
         <div class="topbar-loc-text">
-          <span class="loc-label">Deliver to</span>
+          <span class="loc-label" data-i18n="deliverTo">Deliver to</span>
           <span class="loc-value" id="currentLocation">Agartala, Tripura <i class="fa-solid fa-chevron-down"></i></span>
         </div>
       </div>
@@ -73,11 +81,11 @@
       <div class="hero-decor hd2"></div>
       <div class="hero-decor hd3">✦</div>
       <div class="hero-content">
-        <p class="hero-eyebrow">Freshly Made in Agartala. Always.</p>
-        <h1 class="hero-title">Your Cravings,<br>Freshly <span class="script">Served.</span></h1>
-        <p class="hero-sub">Authentic street food made with love, delivered across Agartala.</p>
+        <p class="hero-eyebrow" data-i18n="heroEyebrow">Freshly Made in Agartala. Always.</p>
+        <h1 class="hero-title"><span data-i18n="heroTitle1">Your Cravings,</span><br><span class="script" data-i18n="heroTitle2">Freshly Served.</span></h1>
+        <p class="hero-sub" data-i18n="heroSub">Authentic street food made with love, delivered across Agartala.</p>
         <button class="hero-cta" id="heroShopBtn">
-          <i class="fa-solid fa-utensils"></i> Order Now
+          <i class="fa-solid fa-utensils"></i> <span data-i18n="orderNow">Order Now</span>
         </button>
       </div>
       <div class="hero-food-icon"><i class="fa-solid fa-bowl-food"></i></div>
@@ -85,20 +93,20 @@
 
     <div class="search-bar" id="openSearch">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <span>Search for momo, biryani, burgers...</span>
+      <span data-i18n="searchPlaceholder">Search for momo, biryani, burgers...</span>
     </div>
 
     <!-- Offers / Special day strip -->
     <section class="section offers-section">
       <div class="section-head">
-        <h2>Special Offers</h2>
+        <h2 data-i18n="specialOffers">Special Offers</h2>
       </div>
       <div class="offers-scroll" id="offersScroll"></div>
     </section>
 
     <section class="section">
       <div class="section-head">
-        <h2>What are you craving?</h2>
+        <h2 data-i18n="craving">What are you craving?</h2>
       </div>
       <div class="cat-scroll" id="categoryScroll"></div>
     </section>
@@ -106,17 +114,17 @@
     <section class="section promo-strip">
       <div class="promo-card promo-a">
         <i class="fa-solid fa-truck-fast"></i>
-        <div><strong>Free Delivery</strong><span>On orders above ₹499</span></div>
+        <div><strong data-i18n="freeDelivery">Free Delivery</strong><span data-i18n="freeDeliverySub">On orders above ₹499</span></div>
       </div>
       <div class="promo-card promo-b">
         <i class="fa-solid fa-heart"></i>
-        <div><strong>Made Fresh</strong><span>Cooked on order day</span></div>
+        <div><strong data-i18n="madeFresh">Made Fresh</strong><span data-i18n="madeFreshSub">Cooked on order day</span></div>
       </div>
     </section>
 
     <section class="section">
       <div class="section-head">
-        <h2 id="menuHeading">Bestsellers</h2>
+        <h2 id="menuHeading" data-i18n="bestsellers">Bestsellers</h2>
         <span class="section-sub" id="menuCount"></span>
       </div>
       <div class="product-grid" id="productGrid"></div>
@@ -129,7 +137,7 @@
           <div class="review-stars">
             <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
           </div>
-          <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="review-cta" id="rateUsBtn">Rate us on Google <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="review-cta" id="rateUsBtn"><span data-i18n="rateUs">Rate us on Google</span> <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
         </div>
         <div class="review-highlights" id="reviewHighlights"></div>
       </div>
@@ -137,15 +145,15 @@
 
     <section class="section about-strip">
       <div class="about-card">
-        <h3>Authentic Street Food, Fresh & Fast</h3>
-        <p>From sizzling momos to flavorful biryani, every dish at Shadher Ghor is made with authentic recipes and the freshest ingredients.</p>
+        <h3 data-i18n="aboutTitle">Authentic Street Food, Fresh & Fast</h3>
+        <p data-i18n="aboutBody">From sizzling momos to flavorful biryani, every dish at Swader Ghor is made with authentic recipes and the freshest ingredients.</p>
         <div class="about-partners">
           <span class="partner-chip"><i class="fa-solid fa-utensils"></i> On Zomato</span>
           <span class="partner-chip"><i class="fa-solid fa-utensils"></i> On Swiggy</span>
         </div>
         <div class="about-socials">
-          <a href="https://www.instagram.com/shadherghor" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-          <a href="https://www.facebook.com/shadherghor" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+          <a href="https://www.instagram.com/swaderghor" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://www.facebook.com/swaderghor" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
           <a href="https://wa.me/918794398516" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
         </div>
       </div>
@@ -188,27 +196,27 @@
   <main id="screen-cart" class="screen">
     <header class="subbar">
       <button class="icon-btn back-btn" data-back="screen-home" aria-label="Back to home"><i class="fa-solid fa-arrow-left"></i></button>
-      <h2>Your Cart</h2>
+      <h2 data-i18n="yourCart">Your Cart</h2>
       <button class="icon-btn danger" id="clearCartBtn" aria-label="Clear cart"><i class="fa-solid fa-trash"></i></button>
     </header>
 
     <div id="cartEmptyState" class="cart-empty hidden">
       <i class="fa-solid fa-bowl-food"></i>
-      <h3>Your cart feels light</h3>
-      <p>Add some delicious food items to get started</p>
-      <button class="btn-primary" data-back="screen-home">Browse Menu</button>
+      <h3 data-i18n="cartEmptyTitle">Your cart feels light</h3>
+      <p data-i18n="cartEmptySub">Add some delicious food items to get started</p>
+      <button class="btn-primary" data-back="screen-home" data-i18n="browseMenu">Browse Menu</button>
     </div>
 
     <div id="cartContent" class="cart-content hidden">
       <div class="cart-items" id="cartItems"></div>
 
       <div class="cart-block">
-        <h3><i class="fa-solid fa-note-sticky"></i> Add a note for the chef</h3>
+        <h3><i class="fa-solid fa-note-sticky"></i> <span data-i18n="addNote">Add a note for the chef</span></h3>
         <textarea id="orderNote" name="orderNote" aria-label="Note for the chef" placeholder="E.g. Extra spicy, no onions, make it mild..." rows="3"></textarea>
       </div>
 
       <div class="cart-block">
-        <h3><i class="fa-solid fa-mug-hot"></i> Add a tip for our chefs</h3>
+        <h3><i class="fa-solid fa-mug-hot"></i> <span data-i18n="addTip">Add a tip for our chefs</span></h3>
         <p class="tip-sub">100% of your tip goes directly to the kitchen team</p>
         <div class="tip-row" id="tipRow">
           <button class="tip-chip active" data-tip="0">No tip</button>
@@ -223,21 +231,21 @@
       </div>
 
       <div class="cart-block bill-block">
-        <h3><i class="fa-solid fa-receipt"></i> Bill Details</h3>
-        <div class="bill-row"><span>Item Total</span><span id="billItemTotal">₹0</span></div>
-        <div class="bill-row"><span>Delivery Fee</span><span id="billDelivery">₹0</span></div>
+        <h3><i class="fa-solid fa-receipt"></i> <span data-i18n="billDetails">Bill Details</span></h3>
+        <div class="bill-row"><span data-i18n="itemTotal">Item Total</span><span id="billItemTotal">₹0</span></div>
+        <div class="bill-row"><span data-i18n="deliveryFee">Delivery Fee</span><span id="billDelivery">₹0</span></div>
         <div class="bill-row" id="billTipRow" style="display:none;"><span>Tip for Chefs</span><span id="billTip">₹0</span></div>
         <div class="bill-row discount-row" id="billDiscountRow" style="display:none;"><span>Free Delivery Discount</span><span id="billDiscount">-₹0</span></div>
         <div class="bill-divider"></div>
-        <div class="bill-row bill-total"><span>To Pay</span><span id="billGrandTotal">₹0</span></div>
+        <div class="bill-row bill-total"><span data-i18n="toPay">To Pay</span><span id="billGrandTotal">₹0</span></div>
         <p class="bill-note" id="freeDeliveryNote"></p>
       </div>
 
       <div class="cart-block">
-        <h3><i class="fa-solid fa-credit-card"></i> Payment Method</h3>
+        <h3><i class="fa-solid fa-credit-card"></i> <span data-i18n="paymentMethod">Payment Method</span></h3>
         <div class="pay-row" id="payRow">
-          <button class="pay-chip active" data-pay="Cash on Delivery"><i class="fa-solid fa-money-bill-wave"></i> Cash on Delivery</button>
-          <button class="pay-chip" data-pay="UPI / Online (pay on delivery link)"><i class="fa-solid fa-mobile-screen-button"></i> UPI Payment</button>
+          <button class="pay-chip active" data-pay="Cash on Delivery"><i class="fa-solid fa-money-bill-wave"></i> <span data-i18n="cashOnDelivery">Cash on Delivery</span></button>
+          <button class="pay-chip" data-pay="UPI / Online (pay on delivery link)"><i class="fa-solid fa-mobile-screen-button"></i> <span data-i18n="upiPayment">UPI Payment</span></button>
         </div>
       </div>
 
@@ -252,21 +260,21 @@
   <main id="screen-summary" class="screen">
     <header class="subbar">
       <button class="icon-btn back-btn" data-back="screen-cart" aria-label="Back to cart"><i class="fa-solid fa-arrow-left"></i></button>
-      <h2>Confirm Your Order</h2>
+      <h2 data-i18n="confirmOrder">Confirm Your Order</h2>
       <span></span>
     </header>
 
     <div class="summary-body">
       <div class="summary-block">
-        <h3><i class="fa-solid fa-user"></i> Your Details</h3>
-        <label for="custName">Full Name *</label>
+        <h3><i class="fa-solid fa-user"></i> <span data-i18n="yourDetails">Your Details</span></h3>
+        <label for="custName" data-i18n="fullName">Full Name *</label>
         <input type="text" id="custName" name="custName" placeholder="Enter your name" required autocomplete="name">
-        <label for="custPhone">Phone Number *</label>
+        <label for="custPhone" data-i18n="phoneNumber">Phone Number *</label>
         <input type="tel" id="custPhone" name="custPhone" inputmode="numeric" pattern="[0-9]*" placeholder="10-digit mobile number" required maxlength="10" autocomplete="tel">
-        <label for="custAddress">Delivery Address *</label>
+        <label for="custAddress" data-i18n="deliveryAddress">Delivery Address *</label>
         <textarea id="custAddress" name="custAddress" placeholder="House no, street, landmark, area..." rows="2" required></textarea>
         <button type="button" class="use-location-btn" id="useMyLocationBtn">
-          <i class="fa-solid fa-location-crosshairs"></i> Use my current location
+          <i class="fa-solid fa-location-crosshairs"></i> <span data-i18n="useMyLocation">Use my current location</span>
         </button>
         <label for="custCity">City / Pincode</label>
         <input type="text" id="custCity" name="custCity" placeholder="City and pincode" value="Agartala, Tripura" autocomplete="address-level2">
@@ -307,7 +315,7 @@
 
     <div class="summary-footer">
       <button class="btn-whatsapp" id="sendWhatsappBtn">
-        <i class="fa-brands fa-whatsapp"></i> Send Order on WhatsApp
+        <i class="fa-brands fa-whatsapp"></i> <span data-i18n="sendOrderWhatsapp">Send Order on WhatsApp</span>
       </button>
     </div>
   </main>
@@ -316,11 +324,11 @@
   <main id="screen-success" class="screen">
     <div class="success-body">
       <div class="success-icon"><i class="fa-solid fa-check"></i></div>
-      <h2>Order Sent!</h2>
+      <h2 data-i18n="orderSent">Order Sent!</h2>
       <p>Your order details have been prepared. Please tap send in WhatsApp to complete your order, our team will confirm shortly.</p>
       <div class="success-actions">
-        <button class="btn-primary" id="backHomeBtn">Back to Home</button>
-        <a href="https://wa.me/918794398516" target="_blank" rel="noopener" class="btn-whatsapp-outline"><i class="fa-brands fa-whatsapp"></i> Chat With Us</a>
+        <button class="btn-primary" id="backHomeBtn" data-i18n="backHome">Back to Home</button>
+        <a href="https://wa.me/918794398516" target="_blank" rel="noopener" class="btn-whatsapp-outline"><i class="fa-brands fa-whatsapp"></i> <span data-i18n="chatWithUs">Chat With Us</span></a>
       </div>
     </div>
   </main>
@@ -328,13 +336,13 @@
   <!-- ---------- PROFILE / MORE SCREEN ---------- -->
   <main id="screen-more" class="screen">
     <header class="subbar">
-      <h2>Shadher Ghor</h2>
+      <h2>Swader Ghor</h2>
       <span></span>
     </header>
     <div class="more-body">
       <div class="more-profile-card">
-        <div class="more-logo"><img src="assets/icons/icon-192.png" alt="Shadher Ghor logo"></div>
-        <h3>Shadher Ghor</h3>
+        <div class="more-logo"><img src="assets/icons/icon-192.png" alt="Swader Ghor logo"></div>
+        <h3>Swader Ghor</h3>
         <p>Authentic street food, fresh & fast</p>
         <div class="more-rating">
           <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
@@ -363,14 +371,14 @@
           <div><strong>Rate Us on Google</strong><span>Tell others what you loved</span></div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
-        <a href="https://www.instagram.com/shadherghor" target="_blank" rel="noopener" class="more-item">
+        <a href="https://www.instagram.com/swaderghor" target="_blank" rel="noopener" class="more-item">
           <i class="fa-brands fa-instagram"></i>
-          <div><strong>Instagram</strong><span>@shadherghor</span></div>
+          <div><strong>Instagram</strong><span>@swaderghor</span></div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
-        <a href="https://www.facebook.com/shadherghor" target="_blank" rel="noopener" class="more-item">
+        <a href="https://www.facebook.com/swaderghor" target="_blank" rel="noopener" class="more-item">
           <i class="fa-brands fa-facebook"></i>
-          <div><strong>Facebook</strong><span>shadherghor</span></div>
+          <div><strong>Facebook</strong><span>swaderghor</span></div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
         <button class="more-item" id="moreCustomBtn">
@@ -385,7 +393,7 @@
         </button>
       </div>
 
-      <p class="app-version" id="appVersionLabel">Shadher Ghor App &middot; Version 1.5.0</p>
+      <p class="app-version" id="appVersionLabel">Swader Ghor App &middot; Version 2.0.0</p>
     </div>
     <div class="bottom-spacer"></div>
   </main>
@@ -393,17 +401,17 @@
   <!-- ---------- BOTTOM NAV ---------- -->
   <nav class="bottom-nav" id="bottomNav">
     <button class="nav-btn active" data-screen="screen-home">
-      <i class="fa-solid fa-house"></i><span>Home</span>
+      <i class="fa-solid fa-house"></i><span data-i18n="navHome">Home</span>
     </button>
     <button class="nav-btn" data-screen="screen-menu">
-      <i class="fa-solid fa-utensils"></i><span>Menu</span>
+      <i class="fa-solid fa-utensils"></i><span data-i18n="navMenu">Menu</span>
     </button>
     <button class="nav-btn" data-screen="screen-cart">
-      <i class="fa-solid fa-bag-shopping"></i><span>Cart</span>
+      <i class="fa-solid fa-bag-shopping"></i><span data-i18n="navCart">Cart</span>
       <span class="nav-badge hidden" id="navCartBadge">0</span>
     </button>
     <button class="nav-btn" data-screen="screen-more">
-      <i class="fa-solid fa-user"></i><span>More</span>
+      <i class="fa-solid fa-user"></i><span data-i18n="navMore">More</span>
     </button>
   </nav>
 
@@ -413,7 +421,7 @@
       <span class="float-cart-count" id="floatCartCount">0 items</span>
       <span class="float-cart-total" id="floatCartTotal">₹0</span>
     </div>
-    <button class="float-cart-btn" id="floatCartBtn">View Cart <i class="fa-solid fa-arrow-right"></i></button>
+    <button class="float-cart-btn" id="floatCartBtn"><span data-i18n="viewCart">View Cart</span> <i class="fa-solid fa-arrow-right"></i></button>
     <button class="float-cart-close" id="floatCartClose" aria-label="Dismiss"><i class="fa-solid fa-xmark"></i></button>
   </div>
 
@@ -463,13 +471,74 @@
     <a href="https://maps.app.goo.gl/qjv4cav9pDzmrN9o8" target="_blank" rel="noopener" class="contact-tile">
       <i class="fa-solid fa-map-location-dot"></i><span>Directions</span><small>Google Maps</small>
     </a>
-    <a href="https://www.instagram.com/shadherghor" target="_blank" rel="noopener" class="contact-tile">
+    <a href="https://www.instagram.com/swaderghor" target="_blank" rel="noopener" class="contact-tile">
       <i class="fa-brands fa-instagram"></i><span>Instagram</span><small>Follow us</small>
     </a>
-    <a href="https://www.facebook.com/shadherghor" target="_blank" rel="noopener" class="contact-tile">
+    <a href="https://www.facebook.com/swaderghor" target="_blank" rel="noopener" class="contact-tile">
       <i class="fa-brands fa-facebook"></i><span>Facebook</span><small>Follow us</small>
     </a>
   </div>
+</div>
+
+<!-- ===================== LANGUAGE SHEET ===================== -->
+<div class="sheet-backdrop" id="languageBackdrop"></div>
+<div class="sheet language-sheet" id="languageSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" id="closeLanguageSheet"><i class="fa-solid fa-xmark"></i></button>
+  <h3><i class="fa-solid fa-language"></i> Language / ভাষা / भाषा</h3>
+  <p class="loc-desc">Choose your preferred language for the app</p>
+  <div class="language-list" id="languageList"></div>
+</div>
+
+<!-- ===================== CONFIRM SHEET (custom, replaces browser confirm()) ===================== -->
+<div class="sheet-backdrop" id="confirmBackdrop"></div>
+<div class="sheet confirm-sheet" id="confirmSheet">
+  <div class="sheet-handle"></div>
+  <div class="confirm-icon"><i class="fa-solid fa-triangle-exclamation" id="confirmIcon"></i></div>
+  <h3 class="confirm-title" id="confirmTitle">Are you sure?</h3>
+  <p class="loc-desc" id="confirmMessage">This action cannot be undone.</p>
+  <div class="confirm-actions">
+    <button class="btn-ghost" id="confirmCancelBtn">Cancel</button>
+    <button class="btn-danger" id="confirmOkBtn">Confirm</button>
+  </div>
+</div>
+
+<!-- ===================== UPI PAYMENT SHEET ===================== -->
+<div class="sheet-backdrop" id="upiBackdrop"></div>
+<div class="sheet upi-sheet" id="upiSheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" id="closeUpiSheet"><i class="fa-solid fa-xmark"></i></button>
+  <h3><i class="fa-solid fa-mobile-screen-button"></i> Pay via UPI</h3>
+  <p class="loc-desc">Scan the QR code or copy the UPI ID below to pay, then place your order &mdash; we'll confirm your payment on WhatsApp.</p>
+
+  <div class="upi-qr-wrap">
+    <div class="upi-qr-box" id="upiQrBox">
+      <i class="fa-solid fa-qrcode"></i>
+      <span>Demo QR &middot; Replace with real UPI QR</span>
+    </div>
+  </div>
+
+  <div class="copy-field">
+    <div class="copy-field-text">
+      <span class="copy-field-label">UPI ID</span>
+      <span class="copy-field-value" id="upiIdValue">swaderghor@upi</span>
+    </div>
+    <button class="copy-btn" id="copyUpiBtn" data-copy-target="upiIdValue" aria-label="Copy UPI ID">
+      <i class="fa-solid fa-copy"></i> Copy
+    </button>
+  </div>
+
+  <div class="copy-field">
+    <div class="copy-field-text">
+      <span class="copy-field-label">Phone Number</span>
+      <span class="copy-field-value" id="upiPhoneValue">+91 87943 98516</span>
+    </div>
+    <button class="copy-btn" id="copyPhoneBtn" data-copy-target="upiPhoneValue" aria-label="Copy phone number">
+      <i class="fa-solid fa-copy"></i> Copy
+    </button>
+  </div>
+
+  <button class="btn-primary" id="upiDoneBtn">Got it, Continue</button>
 </div>
 
 <!-- ===================== CUSTOM ENQUIRY SHEET ===================== -->
